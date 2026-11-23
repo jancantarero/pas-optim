@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marxa Lab · Anàlisi de la marxa amb vídeo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eef2;--ink:#14202b;--mut:#5b6b79;--card:#fff;--ac:#2447f5;--ok:#1f9d6b;--mid:#e59a00;--bad:#d62e3a;--line:#cfd8e0}
+@media(prefers-color-scheme:dark){:root{--bg:#10171e;--ink:#e8eef3;--mut:#93a4b3;--card:#18222c;--ac:#6f8cff;--line:#2a3845}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5}
+.w{max-width:1040px;margin:0 auto;padding:0 20px}
+h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:.98;font-weight:800;letter-spacing:-.03em;margin:56px 0 16px;max-width:14ch}
+h2{font-size:1.5rem;margin:48px 0 14px;letter-spacing:-.01em}
+.lead{font-size:1.15rem;color:var(--mut);max-width:56ch;margin:0 0 28px}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.stage{grid-template-columns:1fr}}
+.slot{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:14px}
+.slot b{display:block;font-size:1.05rem}.slot small{color:var(--mut)}
+.vw{position:relative;margin-top:10px;border-radius:12px;overflow:hidden;background:#0003;aspect-ratio:3/4;display:none}
+.vw.on{display:block}
+.vw video,.vw canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pick{display:inline-block;margin-top:8px;padding:9px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;cursor:pointer}
+.pick:focus-within,button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.tips{color:var(--mut);font-size:.95rem;margin:16px 0}
+button#go{font:inherit;font-weight:700;font-size:1.05rem;border:0;border-radius:14px;padding:14px 28px;background:var(--ac);color:#fff;cursor:pointer}
+button#go:disabled{opacity:.4;cursor:not-allowed}
+.bar{height:8px;border-radius:9px;background:var(--line);margin-top:14px;overflow:hidden;display:none}
+.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}
+#st{color:var(--mut);margin-top:8px;min-height:1.5em}
+#res{display:none}
+.top{display:flex;gap:28px;align-items:center;flex-wrap:wrap;background:var(--card);border-radius:22px;padding:24px}
+.ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring span{width:98px;height:98px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.2rem;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chip{font-size:.85rem;padding:3px 10px;border-radius:999px;background:var(--bg)}
+.f{background:var(--card);border-radius:16px;padding:20px 22px;margin:12px 0;border-left:8px solid var(--mid)}
+.f.s2{border-color:var(--bad)}
+.f h3{margin:0;font-size:1.2rem}.f .v{color:var(--mut);font-size:.95rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:10px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+.f h4{margin:10px 0 2px;font-size:.95rem}.f ul{margin:0;padding-left:18px}
+.shoe{background:var(--ink);color:var(--bg);border-radius:22px;padding:26px}
+.shoe h3{margin:0 0 6px;font-size:1.6rem}
+footer{color:var(--mut);font-size:.9rem;margin:48px 0;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>Mira com camines.</h1>
+<p class="lead">Puja un vídeo de front i un de perfil. La web detecta el teu esquelet, mesura la marxa i et diu què corregir, quines lesions pots tenir o patir i quin calçat et convé.</p>
+
+<div class="stage">
+ <div class="slot"><b>Vídeo frontal</b><small>Camines cap a la càmera</small><br>
+  <label class="pick">Tria el vídeo<input type="file" id="f_front" accept="video/*"></label>
+  <div class="vw" id="w_front"><video id="v_front" muted playsinline controls></video><canvas id="c_front"></canvas></div></div>
+ <div class="slot"><b>Vídeo lateral</b><small>Camines d'un costat a l'altre</small><br>
+  <label class="pick">Tria el vídeo<input type="file" id="f_side" accept="video/*"></label>
+  <div class="vw" id="w_side"><video id="v_side" muted playsinline controls></video><canvas id="c_side"></canvas></div></div>
+</div>
+<p class="tips">Per a un bon resultat: cos sencer visible, càmera fixa a l'alçada del maluc, 5–10 s caminant a ritme normal, roba ajustada i bona llum.</p>
+<button id="go" disabled>Analitza la marxa</button>
+<div class="bar" id="bar"><i id="pg"></i></div>
+<div id="st"></div>
+
+<section id="res">
+ <h2>El teu resultat</h2>
+ <div class="top"><div class="ring" id="ring"><span id="sc"></span></div>
+  <div style="flex:1;min-width:240px"><b id="verd"></b><p id="sumy" style="margin:4px 0;color:var(--mut)"></p><div class="chips" id="okc"></div></div></div>
+ <h2>Errors detectats</h2><div id="fl"></div>
+ <h2>Calçat recomanat</h2><div class="shoe" id="shoe"></div>
+</section>
+
+<footer>Les teves imatges es processen només al teu navegador i no es pugen enlloc. Aquesta eina és orientativa i no substitueix un diagnòstic: si tens dolor persistent, consulta un fisioterapeuta, un podòleg o un metge.</footer>
+</div>
+
+<script type="module">
+import {PoseLandmarker,FilesetResolver,DrawingUtils} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+const $=s=>document.querySelector(s);
+let lmk=null,ts=0;
+const have={};
+for(const k of ["front","side"]){$("#f_"+k).onchange=e=>{const f=e.target.files[0];if(!f)return;$("#v_"+k).src=URL.createObjectURL(f);$("#w_"+k).classList.add("on");have[k]=1;$("#go").disabled=!(have.front&&have.side)}}
+
+async function load(){
+ const fs=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+ const o=d=>({baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate:d},runningMode:"VIDEO",numPoses:1});
+ try{lmk=await PoseLandmarker.createFromOptions(fs,o("GPU"))}catch(e){lmk=await PoseLandmarker.createFromOptions(fs,o("CPU"))}
+}
+function run(k,prog){return new Promise(async res=>{
+ const v=$("#v_"+k),c=$("#c_"+k),x=c.getContext("2d"),du=new DrawingUtils(x),fr=[];let last=-1;
+ c.width=v.videoWidth;c.height=v.videoHeight;v.controls=false;v.currentTime=0;v.playbackRate=1;
+ v.onended=()=>{v.controls=true;x.clearRect(0,0,c.width,c.height);res({fr,W:v.videoWidth,H:v.videoHeight})};
+ const loop=()=>{if(v.ended)return;
+  if(v.currentTime!==last){last=v.currentTime;ts=Math.max(ts+1,performance.now()|0);
+   const r=lmk.detectForVideo(v,ts),l=r.landmarks[0];x.clearRect(0,0,c.width,c.height);
+   if(l){du.drawConnectors(l,PoseLandmarker.POSE_CONNECTIONS,{color:"#ffffffcc",lineWidth:3});du.drawLandmarks(l,{color:"#2447f5",radius:3});fr.push({t:last,lm:l})}
+   prog(last/v.duration)}
+  requestAnimationFrame(loop)};
+ await v.play();loop()})}
+
+/* ---------- càlculs ---------- */
+const vis=(l,ids)=>ids.every(i=>(l[i].visibility??1)>.5);
+const q=(a,p)=>{if(!a.length)return NaN;const s=[...a].sort((x,y)=>x-y);return s[Math.floor(p*(s.length-1))]};
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN;
+const ang=(a,b,c)=>{const u={x:a.x-b.x,y:a.y-b.y},w={x:c.x-b.x,y:c.y-b.y};return Math.acos(Math.max(-1,Math.min(1,(u.x*w.x+u.y*w.y)/((Math.hypot(u.x,u.y)*Math.hypot(w.x,w.y))||1))))*57.3};
+
+function front({fr,W,H}){const a={pel:[],sh:[],sw:[],wd:[],vl:[]};
+ for(const f of fr){const l=f.lm;if(!vis(l,[11,12,23,24,25,26,27,28]))continue;
+  const [ls,rs,lh,rh,lk,rk,la,ra]=[11,12,23,24,25,26,27,28].map(i=>({x:l[i].x*W,y:l[i].y*H}));
+  const hw=Math.abs(lh.x-rh.x);if(hw<W*.02)continue;const mh=(lh.x+rh.x)/2;
+  const t=(p,r)=>Math.abs(Math.atan2(r.y-p.y,Math.abs(r.x-p.x)))*57.3;
+  a.pel.push(t(lh,rh));a.sh.push(t(ls,rs));a.sw.push(((ls.x+rs.x)/2-mh)/hw);a.wd.push(Math.abs(la.x-ra.x)/hw);
+  for(const [h,k,n,s] of [[lh,lk,la,lh.x>rh.x?1:-1],[rh,rk,ra,rh.x>lh.x?1:-1]]){
+   const lx=h.x+(n.x-h.x)*(k.y-h.y)/((n.y-h.y)||1);a.vl.push(-(k.x-lx)*s/Math.hypot(n.x-h.x,n.y-h.y))}}
+ return a}
+
+function side({fr,W,H}){const a={ln:[],hd:[],k:[[],[]],S:[]};let d=0;
+ const ok=fr.filter(f=>vis(f.lm,[0,11,12,23,24,25,26,27,28]));
+ for(const f of ok)d+=Math.sign(f.lm[0].x-(f.lm[23].x+f.lm[24].x)/2);d=d>=0?1:-1;
+ for(const f of ok){const l=f.lm,g=i=>({x:l[i].x*W,y:l[i].y*H});
+  const s={x:(g(11).x+g(12).x)/2,y:(g(11).y+g(12).y)/2},h={x:(g(23).x+g(24).x)/2,y:(g(23).y+g(24).y)/2},tl=Math.hypot(s.x-h.x,s.y-h.y);if(tl<10)continue;
+  a.ln.push(Math.atan2((s.x-h.x)*d,h.y-s.y)*57.3);a.hd.push(((g(7).x+g(8).x)/2-s.x)*d/tl);
+  a.k[0].push(180-ang(g(23),g(25),g(27)));a.k[1].push(180-ang(g(24),g(26),g(28)));
+  const sp=(g(27).x-g(28).x)*d,lead=sp>0?g(27):g(28),ll=(Math.hypot(g(23).x-g(27).x,g(23).y-g(27).y)+Math.hypot(g(24).x-g(28).x,g(24).y-g(28).y))/2;
+  a.S.push({t:f.t,sp,ov:(lead.x-h.x)*d/ll})}
+ const S=a.S,mx=Math.max(...S.map(s=>Math.abs(s.sp))),pk=[];
+ for(let i=1;i<S.length-1;i++){const v=Math.abs(S[i].sp);if(v>.35*mx&&v>=Math.abs(S[i-1].sp)&&v>Math.abs(S[i+1].sp)&&(!pk.length||S[i].t-pk[pk.length-1].t>.25))pk.push(S[i])}
+ a.cad=pk.length>2?(pk.length-1)/(pk[pk.length-1].t-pk[0].t)*60:NaN;a.ov=q(pk.map(p=>p.ov),.5);return a}
+
+/* ---------- coneixement ---------- */
+const deg=v=>v.toFixed(1)+"°",pc=v=>(v*100).toFixed(0)+"%";
+const K={
+valgus:{t:"Genoll cap endins (valg dinàmic)",f:v=>pc(v)+" de la longitud de la cama",a:.07,b:.11,d:1,tag:"S",
+ now:["Dolor davanter de genoll","Sobrecàrrega de la cintilla iliotibial"],fut:["Tendinopatia de la pota d'ansa","Més risc de lesió de lligaments del genoll","Desgast femoropatel·lar"],
+ ex:["Clamshell amb goma 3×15 per costat","Passos laterals amb goma 3×12 per costat","Esquat a una cama davant d'un mirall 3×8","Pont de glutis amb goma als genolls 3×12"]},
+pelvis:{t:"Caiguda de la pelvis",f:deg,a:5,b:8,d:1,tag:"S",
+ now:["Dolor lateral de maluc","Lumbàlgia per compensació"],fut:["Bursitis trocantèria","Sobrecàrrega de la cintilla iliotibial","Dolor lumbar recurrent"],
+ ex:["Pont de glutis a una cama 3×10","Planxa lateral 3×30 s","Pujada lateral a l'esglaó 3×10","Abducció de maluc amb goma 3×15"]},
+shoulder:{t:"Espatlles inclinades",f:deg,a:6,b:9,d:1,
+ now:["Tensió cervical i de trapezi","Molèstia lumbar d'un sol costat"],fut:["Sobrecàrrega muscular asimètrica crònica"],
+ ex:["Farmer walk 3×20 m amb el mateix pes a cada mà","Estirament del quadrat lumbar 2×30 s","Remada amb goma 3×12"]},
+sway:{t:"Balanceig lateral del tronc",f:v=>v.toFixed(2)+"× amplada de maluc",a:.3,b:.5,d:1,tag:"S",
+ now:["Dolor lateral de maluc","Lumbàlgia"],fut:["Sobrecàrrega del glute mitjà","Dolor lumbar crònic"],
+ ex:["Pallof press 3×10 per costat","Planxa lateral 3×30 s","Farmer walk a una mà 3×20 m"]},
+wide:{t:"Base de suport massa ampla",f:v=>v.toFixed(2)+"× amplada de maluc",a:1.2,b:1.6,d:1,tag:"S",
+ now:["Dolor lateral de maluc","Fatiga dels adductors"],fut:["Sobrecàrrega de pelvis i zona lumbar"],
+ ex:["Caminar sobre una línia recta 3×10 m","Esquat amb pilota entre els genolls 3×12","Equilibri a una cama 3×30 s"]},
+narrow:{t:"Base massa estreta (passos creuats)",f:v=>v.toFixed(2)+"× amplada de maluc",a:.35,b:.15,d:-1,tag:"S",
+ now:["Síndrome de la cintilla iliotibial","Dolor lateral de turmell"],fut:["Fractura d'estrès de tíbia","Esquinços de turmell repetits"],
+ ex:["Caminar lateral amb goma 3×12 passos","Equilibri a una cama 3×30 s","Abducció de maluc 3×15"]},
+fwd:{t:"Tronc inclinat endavant",f:deg,a:10,b:15,d:1,tag:"C",
+ now:["Lumbàlgia","Tensió als flexors del maluc"],fut:["Sobrecàrrega lumbar crònica","Acurtament del psoes"],
+ ex:["Estirament de psoes 3×30 s per costat","Extensió toràcica sobre un rodet 2×10","Pont de glutis 3×15","Planxa frontal 3×30 s"]},
+bwd:{t:"Tronc inclinat endarrere",f:deg,a:4,b:8,d:1,
+ now:["Compressió lumbar","Sobrecàrrega de la zona lumbar"],fut:["Dolor lumbar crònic"],
+ ex:["Dead bug 3×10","Planxa frontal 3×30 s","Pont de glutis 3×15"]},
+head:{t:"Cap avançat",f:v=>pc(v)+" de la longitud del tronc",a:.2,b:.32,d:1,
+ now:["Cefalea tensional","Dolor cervical"],fut:["Cervicàlgia crònica","Sobrecàrrega de trapezi i esquena alta"],
+ ex:["Retracció cervical (chin tuck) 3×10 de 5 s","Remada amb goma 3×12","Estirament de pectoral al marc de la porta 2×30 s"]},
+rom:{t:"Genolls rígids (poca flexió)",f:deg+"",a:45,b:35,d:-1,tag:"C",
+ now:["Impacte alt a les articulacions","Dolor lumbar"],fut:["Desgast de genoll i maluc","Tendinopatia rotuliana"],
+ ex:["Esquat goblet 3×10","Pes mort romanès lleuger 3×10","Mobilitat de turmell contra la paret 2×10"]},
+over:{t:"Sobrepas (peu massa endavant)",f:v=>pc(v)+" de la longitud de la cama",a:.5,b:.65,d:1,tag:"C",
+ now:["Periostitis tibial (dolor a la canyella)","Dolor al taló"],fut:["Fractura d'estrès de tíbia","Dolor de genoll per impacte"],
+ ex:["Passos curts amb metrònom (+5–10% de cadència)","Dorsiflexions de turmell amb goma 3×15","Pujada d'esglaons 3×10"]},
+cad:{t:"Cadència baixa",f:v=>v.toFixed(0)+" passos/min",a:95,b:85,d:-1,
+ now:["Més temps de càrrega a cada pas"],fut:["Sobrecàrrega de genoll i maluc"],
+ ex:["Caminar amb metrònom a 105–115 ppm durant 10 min","Intervals de marxa ràpida 5×1 min"]}};
+K.rom.f=v=>v.toFixed(0)+"° de rang";
+
+function analyze(F,S){
+ const m=avg(F.wd.length?[q(F.wd,.5)]:[]);
+ const V={valgus:q(F.vl,.85),pelvis:q(F.pel,.9),shoulder:q(F.sh,.9),sway:q(F.sw,.95)-q(F.sw,.05),wide:m,narrow:m,
+  fwd:avg(S.ln),bwd:-avg(S.ln),head:q(S.hd,.5),rom:(q(S.k[0],.95)-q(S.k[0],.05)+q(S.k[1],.95)-q(S.k[1],.05))/2,over:S.ov,cad:S.cad};
+ const out=[],oks=[];
+ for(const [k,e] of Object.entries(K)){const v=V[k];if(!isFinite(v))continue;
+  const sev=e.d*v>=e.d*e.b?2:e.d*v>=e.d*e.a?1:0;
+  (sev?out:oks).push({k,e,v,sev})}
+ return {bad:out.sort((x,y)=>y.sev-x.sev),oks}}
+
+const li=a=>"<ul>"+a.map(s=>"<li>"+s+"</li>").join("")+"</ul>";
+function show({bad,oks}){
+ const sc=Math.max(0,100-bad.reduce((n,b)=>n+b.sev*7,0)),col=sc>=80?"var(--ok)":sc>=60?"var(--mid)":"var(--bad)";
+ $("#ring").style.background=`conic-gradient(${col} ${sc*3.6}deg,var(--line) 0)`;$("#sc").textContent=sc;
+ $("#verd").textContent=sc>=80?"Marxa força eficient":sc>=60?"Marxa millorable":"Marxa amb compensacions marcades";
+ $("#sumy").textContent=bad.length?`S'han detectat ${bad.length} punts a treballar. Corregint-los reduiràs el risc de lesió.`:"No s'han detectat desviacions rellevants en aquests vídeos.";
+ $("#okc").innerHTML=oks.map(o=>`<span class="chip">✓ ${o.e.t}</span>`).join("");
+ $("#fl").innerHTML=bad.map(({e,v,sev})=>`<article class="f s${sev}"><h3>${e.t}</h3><div class="v">${sev==2?"Marcat":"Lleu"} · valor mesurat: ${e.f(v)}</div>
+  <div class="cols"><div><h4>Possibles lesions ara</h4>${li(e.now)}</div><div><h4>Risc en el futur</h4>${li(e.fut)}</div></div>
+  <h4>Exercicis per corregir-ho</h4>${li(e.ex)}</article>`).join("")||"<p>Tot dins del rang esperat. Continua amb força general i mobilitat.</p>";
+ const nS=bad.filter(b=>b.e.tag=="S").length,nC=bad.filter(b=>b.e.tag=="C").length;
+ const T=nS&&nC?["Estabilitat amb bon amortiment","Suport medial moderat, taló ferm i sola ampla, combinat amb amortiment mitjà-alt i sola amb balancí (rocker)."]
+  :nS?["Sabatilla d'estabilitat","Suport medial moderat, contrafort de taló ferm i sola ampla i estable. Evita models molt tous o de sola estreta."]
+  :nC?["Amortiment amb balancí","Amortiment mitjà-alt al taló, sola amb balancí (rocker) i drop de 6–10 mm per suavitzar l'impacte i l'avanç del peu."]
+  :["Sabatilla neutra","Model neutre, flexible i amb amortiment moderat. Tria segons comoditat."];
+ $("#shoe").innerHTML=`<h3>${T[0]}</h3><p>${T[1]}</p>${li(["Deixa uns 1–1,5 cm lliures davant del dit llarg i una punta prou ampla.","Prova-les a la tarda, quan el peu està més inflat.","Canvia-les cada 600–800 km o quan la sola es vegi deformada.",nS>1?"Amb diverses compensacions, val la pena fer un estudi de la petjada amb un podòleg.":"Si tens molèsties, un podòleg et pot valorar si necessites plantilles."])}`;
+ $("#res").style.display="block";$("#res").scrollIntoView({behavior:"smooth"})}
+
+$("#go").onclick=async()=>{
+ const st=$("#st"),pg=$("#pg");$("#bar").style.display="block";$("#go").disabled=true;
+ try{
+  if(!lmk){st.textContent="Carregant el model de detecció de postura…";await load()}
+  st.textContent="Analitzant el vídeo frontal…";const A=await run("front",p=>pg.style.width=p*50+"%");
+  st.textContent="Analitzant el vídeo lateral…";const B=await run("side",p=>pg.style.width=50+p*50+"%");
+  if(A.fr.length<20||B.fr.length<20){st.textContent="No s'ha detectat prou el cos. Grava de nou amb el cos sencer visible i més llum.";$("#go").disabled=false;return}
+  show(analyze(front(A),side(B)));st.textContent="Anàlisi completada.";
+ }catch(e){console.error(e);st.textContent="Hi ha hagut un error carregant el model o el vídeo. Comprova la connexió i prova de nou."}
+ $("#go").disabled=false};
+</script>
+</body>
+</html>
