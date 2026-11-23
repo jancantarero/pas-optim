@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PasÒptim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eef2;--ink:#14202b;--mut:#5b6b79;--card:#fff;--ac:#2447f5;--ok:#1f9d6b;--mid:#e59a00;--bad:#d62e3a;--line:#cfd8e0}
+@media(prefers-color-scheme:dark){:root{--bg:#10171e;--ink:#e8eef3;--mut:#93a4b3;--card:#18222c;--ac:#6f8cff;--line:#2a3845}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5}
+.w{max-width:1040px;margin:0 auto;padding:0 20px}
+h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:.98;font-weight:800;letter-spacing:-.03em;margin:28px 0 16px;max-width:14ch}
+h2{font-size:1.5rem;margin:48px 0 14px;letter-spacing:-.01em}
+.lead{font-size:1.15rem;color:var(--mut);max-width:60ch;margin:0 0 28px}
+.bar0{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:28px}
+.bar0 img{width:170px;height:auto;border-radius:18px;background:#fff;padding:8px;display:block}
+.lang{display:flex;gap:4px;background:var(--card);border-radius:999px;padding:4px}
+.lang button{font:inherit;font-weight:700;font-size:.85rem;border:0;border-radius:999px;padding:6px 14px;background:none;color:var(--ink);cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.form{background:var(--card);border-radius:18px;padding:18px 20px;margin:0 0 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.form label{display:flex;flex-direction:column;font-size:.9rem;color:var(--mut);gap:4px}
+.form input,.form select{font:inherit;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.form .full{grid-column:1/-1}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:4px}
+.checks label{flex-direction:row;align-items:center;gap:6px;color:var(--ink)}
+.checks input{width:auto}
+.stage{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:800px){.stage,.form{grid-template-columns:1fr}}
+.slot{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:14px}
+.slot b{display:block;font-size:1.05rem}.slot small{color:var(--mut)}
+.vw{position:relative;margin-top:10px;border-radius:12px;overflow:hidden;background:#0003;aspect-ratio:3/4;display:none}
+.vw.on{display:block}
+.vw video,.vw canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pick{display:inline-block;margin-top:8px;padding:9px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;cursor:pointer}
+.pick:focus-within,button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.tips{color:var(--mut);font-size:.95rem;margin:16px 0}
+.consent{margin:14px 0;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+.consent label{display:flex;gap:8px;align-items:flex-start}
+button#go{font:inherit;font-weight:700;font-size:1.05rem;border:0;border-radius:14px;padding:14px 28px;background:var(--ac);color:#fff;cursor:pointer}
+button#go:disabled{opacity:.4;cursor:not-allowed}
+.bar{height:8px;border-radius:9px;background:var(--line);margin-top:14px;overflow:hidden;display:none}
+.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}
+#st{color:var(--mut);margin-top:8px;min-height:1.5em}
+#res{display:none}
+.top{display:flex;gap:28px;align-items:center;flex-wrap:wrap;background:var(--card);border-radius:22px;padding:24px}
+.ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring span{width:98px;height:98px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.2rem;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chip{font-size:.85rem;padding:3px 10px;border-radius:999px;background:var(--bg)}
+.fich{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:800px){.fich{grid-template-columns:1fr 1fr}}
+.fich div{background:var(--card);border-radius:14px;padding:12px 14px}
+.fich small{display:block;color:var(--mut);font-size:.8rem}
+.f{background:var(--card);border-radius:16px;padding:20px 22px;margin:12px 0;border-left:8px solid var(--mid)}
+.f.s2{border-color:var(--bad)}
+.f h3{margin:0;font-size:1.2rem}.f .v{color:var(--mut);font-size:.95rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:10px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+.f h4{margin:10px 0 2px;font-size:.95rem}.f ul{margin:0;padding-left:18px}
+.hit{display:inline-block;margin-left:8px;font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--ac);color:#fff;vertical-align:middle}
+.note{background:var(--card);border-left:8px solid var(--ac);border-radius:14px;padding:14px 18px;margin:12px 0;font-size:.95rem}
+.shoe{background:var(--ink);color:var(--bg);border-radius:22px;padding:26px}
+.shoe h3{margin:0 0 6px;font-size:1.6rem}
+.ghost{font:inherit;background:none;border:2px solid var(--ink);color:var(--ink);border-radius:12px;padding:8px 16px;cursor:pointer;margin-top:14px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;font-size:.95rem}
+td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.src{color:var(--mut);font-size:.85rem}
+footer{color:var(--mut);font-size:.9rem;margin:48px 0;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="bar0"><img src="logo.png" alt="PasÒptim"><div class="lang" role="group" aria-label="Idioma / Language"><button>CA</button><button>ES</button><button>EN</button></div></div>
+<h1 data-t="h1"></h1>
+<p class="lead" data-t="lead"></p>
+
+<div class="form">
+ <label><span data-t="f_act"></span><select id="act"><option value="0" data-t="o_walk"></option><option value="1" data-t="o_run"></option><option value="2" data-t="o_both"></option></select></label>
+ <label><span data-t="f_age"></span><input type="number" id="age" min="8" max="99" data-ph="ph_age"></label>
+ <label><span data-t="f_sex"></span><select id="sex"><option value="" data-t="o_none"></option><option value="f" data-t="o_f"></option><option value="m" data-t="o_m"></option></select></label>
+ <label><span data-t="f_h"></span><input type="number" id="h" min="100" max="230"></label>
+ <label><span data-t="f_wt"></span><input type="number" id="wt" min="20" max="250"></label>
+ <div></div>
+ <div class="full"><span style="font-size:.9rem;color:var(--mut)" data-t="f_pain"></span>
+  <div class="checks" id="mols"></div></div>
+ <div class="full checks">
+  <label><input type="checkbox" id="prev"><span data-t="c_prev"></span></label>
+  <label><input type="checkbox" id="long"><span data-t="c_long"></span></label>
+ </div>
+</div>
+
+<div class="stage" id="stage"></div>
+<p class="tips" data-t="tips"></p>
+<div class="consent">
+ <label><input type="checkbox" id="ok1"><span data-t="ok1"></span></label>
+ <label id="tut" style="display:none"><input type="checkbox" id="ok2"><span data-t="ok2"></span></label>
+</div>
+<button id="go" disabled data-t="go"></button>
+<div class="bar" id="bar"><i id="pg"></i></div>
+<div id="st"></div>
+
+<section id="res">
+ <h2 data-t="r_title"></h2>
+ <div class="top"><div class="ring" id="ring"><span id="sc"></span></div>
+  <div style="flex:1;min-width:240px"><b id="verd"></b><p id="sumy" style="margin:4px 0;color:var(--mut)"></p><div class="chips" id="okc"></div></div></div>
+ <h2 data-t="r_card"></h2><div class="fich" id="fich"></div>
+ <h2 data-t="r_err"></h2><div id="fl"></div><div id="ref"></div>
+ <h2 data-t="r_shoe"></h2><div class="shoe" id="shoe"></div>
+ <div class="note" data-h="note"></div>
+ <button class="ghost" id="wipe" data-t="wipe"></button>
+</section>
+
+<h2 data-t="why"></h2>
+<table>
+ <tr><td data-t="tb1"></td><td><b data-t="n1"></b></td><td class="src">Roy et al., 2022</td></tr>
+ <tr><td data-t="tb2"></td><td><b data-t="n2"></b></td><td class="src">Stenerson et al., 2023</td></tr>
+ <tr><td data-t="tb3"></td><td><b data-t="n3"></b></td><td class="src">Generalitat de Catalunya, DMAF 2025</td></tr>
+</table>
+<p class="src" data-t="why_p"></p>
+<footer data-t="foot"></footer>
+</div>
+
+<script type="module">
+const $=s=>document.querySelector(s);
+/* ---------- textos: [català, castellà, anglès] ---------- */
+const D={
+title:["PasÒptim · El teu caminar, el teu calçat","PasÒptim · Tu forma de caminar, tu calzado","PasÒptim · Your gait, your footwear"],
+h1:["Mira com camines.","Mira cómo caminas.","See how you walk."],
+lead:["Respon unes preguntes, puja un vídeo de front i un de perfil (i, si vols, un de darrere), i PasÒptim detecta el teu esquelet, mesura la teva marxa i t'orienta sobre què treballar i quin tipus de calçat et pot anar bé. És una eina de prevenció i benestar, no de diagnòstic.","Responde unas preguntas, sube un vídeo de frente y uno de perfil (y, si quieres, uno de espaldas), y PasÒptim detecta tu esqueleto, mide tu marcha y te orienta sobre qué trabajar y qué tipo de calzado te puede ir bien. Es una herramienta de prevención y bienestar, no de diagnóstico.","Answer a few questions, upload a front video and a side video (and, optionally, a rear one), and PasÒptim tracks your skeleton, measures your gait and guides you on what to work on and what type of footwear may suit you. It is a prevention and wellbeing tool, not a diagnostic one."],
+f_act:["Activitat","Actividad","Activity"],o_walk:["Caminar","Caminar","Walking"],o_run:["Córrer","Correr","Running"],o_both:["Les dues coses","Las dos cosas","Both"],
+f_age:["Edat","Edad","Age"],ph_age:["Anys","Años","Years"],
+f_sex:["Sexe (opcional)","Sexo (opcional)","Sex (optional)"],o_none:["Prefereixo no dir-ho","Prefiero no decirlo","Prefer not to say"],o_f:["Dona","Mujer","Female"],o_m:["Home","Hombre","Male"],
+f_h:["Alçada en cm (opcional)","Altura en cm (opcional)","Height in cm (optional)"],f_wt:["Pes en kg (opcional)","Peso en kg (opcional)","Weight in kg (optional)"],
+f_pain:["Tens alguna molèstia ara?","¿Tienes alguna molestia ahora?","Any pain or discomfort now?"],
+m_genoll:["Genoll","Rodilla","Knee"],m_maluc:["Maluc","Cadera","Hip"],m_canyella:["Canyella","Espinilla","Shin"],m_peu:["Peu o turmell","Pie o tobillo","Foot or ankle"],m_esquena:["Esquena lumbar","Zona lumbar","Lower back"],m_coll:["Coll","Cuello","Neck"],
+c_prev:["He tingut alguna lesió en l'últim any","He tenido alguna lesión en el último año","I have had an injury in the last year"],
+c_long:["Tinc una molèstia de més de 15 dies","Tengo una molestia de más de 15 días","I have had pain for more than 15 days"],
+v_front:["Vídeo frontal","Vídeo frontal","Front video"],s_front:["Camines cap a la càmera","Caminas hacia la cámara","Walk towards the camera"],
+v_side:["Vídeo lateral","Vídeo lateral","Side video"],s_side:["Camines d'un costat a l'altre","Caminas de un lado a otro","Walk across the frame"],
+v_back:["Vídeo posterior (opcional)","Vídeo posterior (opcional)","Rear video (optional)"],s_back:["Camines allunyant-te de la càmera","Caminas alejándote de la cámara","Walk away from the camera"],
+pick:["Tria el vídeo","Elige el vídeo","Choose video"],
+tips:["Per a un bon resultat: cos sencer visible, càmera fixa a l'alçada del maluc, 5–10 s caminant a ritme normal, roba ajustada i bona llum. El vídeo posterior és opcional i permet estimar si el taló es decanta cap a fora o cap a dins (pronació o supinació).","Para un buen resultado: cuerpo entero visible, cámara fija a la altura de la cadera, 5–10 s caminando a ritmo normal, ropa ajustada y buena luz. El vídeo posterior es opcional y permite estimar si el talón se inclina hacia fuera o hacia dentro (pronación o supinación).","For a good result: whole body visible, camera fixed at hip height, 5–10 s of walking at a normal pace, fitted clothing and good light. The rear video is optional and lets us estimate whether the heel tilts outward or inward (pronation or supination)."],
+ok1:["Accepto que els meus vídeos es processin en aquest dispositiu. No es pugen ni es guarden enlloc (RGPD).","Acepto que mis vídeos se procesen en este dispositivo. No se suben ni se guardan en ningún sitio (RGPD).","I agree my videos are processed on this device. They are not uploaded or stored anywhere (GDPR)."],
+ok2:["Sóc menor d'edat i tinc l'autorització d'un pare, mare o tutor.","Soy menor de edad y tengo la autorización de un padre, madre o tutor.","I am a minor and have permission from a parent or guardian."],
+go:["Analitza la marxa","Analiza la marcha","Analyse my gait"],
+st_load:["Carregant el model de detecció de postura…","Cargando el modelo de detección de postura…","Loading the pose detection model…"],
+st_front:["Analitzant el vídeo frontal…","Analizando el vídeo frontal…","Analysing the front video…"],st_side:["Analitzant el vídeo lateral…","Analizando el vídeo lateral…","Analysing the side video…"],st_back:["Analitzant el vídeo posterior…","Analizando el vídeo posterior…","Analysing the rear video…"],
+st_done:["Anàlisi completada.","Análisis completado.","Analysis complete."],
+st_fail:["No s'ha detectat prou el cos. Grava de nou amb el cos sencer visible i més llum.","No se ha detectado suficiente el cuerpo. Vuelve a grabar con el cuerpo entero visible y más luz.","The body was not detected well enough. Record again with your whole body visible and better light."],
+st_err:["Hi ha hagut un error carregant el model o el vídeo. Comprova la connexió i prova de nou.","Ha habido un error al cargar el modelo o el vídeo. Comprueba la conexión e inténtalo de nuevo.","There was an error loading the model or video. Check your connection and try again."],
+st_wiped:["Vídeos esborrats d'aquest dispositiu.","Vídeos borrados de este dispositivo.","Videos deleted from this device."],
+r_title:["El teu resultat","Tu resultado","Your result"],r_card:["Fitxa del client","Ficha del cliente","Client profile"],r_err:["Errors detectats","Errores detectados","Issues detected"],r_shoe:["Calçat orientatiu","Calzado orientativo","Footwear guidance"],
+v_hi:["Marxa força eficient","Marcha bastante eficiente","Fairly efficient gait"],v_mid:["Marxa millorable","Marcha mejorable","Gait with room to improve"],v_lo:["Marxa amb compensacions marcades","Marcha con compensaciones marcadas","Gait with marked compensations"],
+sy_n:["S'han detectat {n} punts a treballar. Són una orientació per començar, no un diagnòstic.","Se han detectado {n} puntos a trabajar. Son una orientación para empezar, no un diagnóstico.","{n} points to work on were detected. They are a starting guide, not a diagnosis."],
+sy_0:["No s'han detectat desviacions rellevants en aquests vídeos.","No se han detectado desviaciones relevantes en estos vídeos.","No relevant deviations were detected in these videos."],
+r_none:["Tot dins del rang esperat. Continua amb força general i mobilitat.","Todo dentro del rango esperado. Continúa con fuerza general y movilidad.","Everything is within the expected range. Keep up general strength and mobility."],
+sev1:["Lleu","Leve","Mild"],sev2:["Marcat","Marcado","Marked"],val:["valor mesurat","valor medido","measured value"],
+col_now:["Molèsties que s'hi associen sovint","Molestias que se asocian a menudo","Discomfort often associated"],col_fut:["A la llarga, podria afavorir","A la larga, podría favorecer","Over time, it could favour"],col_ex:["Exercicis correctius bàsics","Ejercicios correctivos básicos","Basic corrective exercises"],
+hit:["Coincideix amb la teva molèstia","Coincide con tu molestia","Matches your reported pain"],
+ex_f:["Aterratge controlat des d'un esglaó{s} 3×8 (control dels genolls)","Aterrizaje controlado desde un escalón{s} 3×8 (control de rodillas)","Controlled landing from a step{s} 3×8 (knee control)"],
+ref_t:["Et recomanem consultar un professional.","Te recomendamos consultar a un profesional.","We recommend seeing a professional."],
+ref_p1:["Has indicat una molèstia","Has indicado una molestia","You reported pain"],ref_p2:[" de més de 15 dies"," de más de 15 días"," lasting more than 15 days"],ref_p3:["També has tingut una lesió recent.","También has tenido una lesión reciente.","You also had a recent injury."],
+ref_p4:["Un fisioterapeuta o un podòleg pot fer una exploració presencial i valorar si cal tractament o plantilles.","Un fisioterapeuta o un podólogo puede hacer una exploración presencial y valorar si hace falta tratamiento o plantillas.","A physiotherapist or podiatrist can examine you in person and assess whether treatment or insoles are needed."],
+ref_ok:["Si més endavant apareix un dolor que no marxa, consulta un fisioterapeuta o un metge.","Si más adelante aparece un dolor que no se va, consulta a un fisioterapeuta o a un médico.","If pain appears later and does not go away, see a physiotherapist or doctor."],
+fi_step:["Longitud de pas estimada","Longitud de paso estimada","Estimated step length"],f_cad:["Cadència","Cadencia","Cadence"],spm:["passos/min","pasos/min","steps/min"],none:["Cap","Ninguna","None"],
+u_leg:["de la longitud de la cama","de la longitud de la pierna","of leg length"],u_tr:["de la longitud del tronc","de la longitud del tronco","of trunk length"],u_hw:["amplada de maluc","ancho de cadera","hip width"],u_rom:["de rang","de rango","range"],
+sh_SC_t:["Estabilitat amb bon amortiment","Estabilidad con buena amortiguación","Stability with good cushioning"],
+sh_SC_p:["Suport medial moderat, taló ferm i sola ampla, combinat amb amortiment mitjà-alt i sola amb balancí (rocker).","Soporte medial moderado, talón firme y suela ancha, combinado con amortiguación media-alta y suela con balancín (rocker).","Moderate medial support, firm heel and wide sole, combined with medium-high cushioning and a rocker sole."],
+sh_S_t:["Sabatilla d'estabilitat","Zapatilla de estabilidad","Stability shoe"],
+sh_S_p:["Suport medial moderat, contrafort de taló ferm i sola ampla i estable. Evita models molt tous o de sola estreta.","Soporte medial moderado, contrafuerte de talón firme y suela ancha y estable. Evita modelos muy blandos o de suela estrecha.","Moderate medial support, firm heel counter and a wide, stable sole. Avoid very soft or narrow-soled models."],
+sh_C_t:["Amortiment amb balancí","Amortiguación con balancín","Cushioned rocker shoe"],
+sh_C_p:["Amortiment mitjà-alt al taló, sola amb balancí (rocker) i drop de 6–10 mm per suavitzar l'impacte i l'avanç del peu.","Amortiguación media-alta en el talón, suela con balancín (rocker) y drop de 6–10 mm para suavizar el impacto y el avance del pie.","Medium-high heel cushioning, a rocker sole and a 6–10 mm drop to soften impact and foot roll-over."],
+sh_N_t:["Sabatilla neutra","Zapatilla neutra","Neutral shoe"],
+sh_N_p:["Model neutre, flexible i amb amortiment moderat. Tria segons comoditat.","Modelo neutro, flexible y con amortiguación moderada. Elige según comodidad.","Neutral, flexible model with moderate cushioning. Choose by comfort."],
+sh_run:["Per córrer, prioritza un amortiment mitjà-alt i una bona subjecció del taló. Les sabatilles de córrer i de caminar no són intercanviables.","Para correr, prioriza una amortiguación media-alta y buena sujeción del talón. Las zapatillas de correr y de caminar no son intercambiables.","For running, prioritise medium-high cushioning and good heel hold. Running and walking shoes are not interchangeable."],
+sh_walk:["Per caminar, busca una sola flexible a la part davantera, còmoda i no gaire pesada.","Para caminar, busca una suela flexible en la parte delantera, cómoda y no muy pesada.","For walking, look for a sole that is flexible at the front, comfortable and not too heavy."],
+sh_wt:["Amb el teu pes, tria models amb amortiment mitjà-alt i una sola que no es deformi aviat.","Con tu peso, elige modelos con amortiguación media-alta y una suela que no se deforme pronto.","At your weight, choose models with medium-high cushioning and a sole that does not wear out quickly."],
+sh_g1:["Deixa uns 1–1,5 cm lliures davant del dit llarg i una punta prou ampla.","Deja 1–1,5 cm libres delante del dedo más largo y una punta lo bastante ancha.","Leave about 1–1.5 cm free in front of your longest toe and a roomy toe box."],
+sh_g2:["Prova-les a la tarda, quan el peu està més inflat.","Pruébalas por la tarde, cuando el pie está más hinchado.","Try them on in the afternoon, when your feet are most swollen."],
+sh_g3:["Canvia-les cada 600–800 km o quan la sola es vegi deformada.","Cámbialas cada 600–800 km o cuando la suela se vea deformada.","Replace them every 600–800 km or when the sole looks worn out."],
+sh_g4a:["Amb diverses compensacions, val la pena fer un estudi de la petjada amb un podòleg.","Con varias compensaciones, merece la pena hacer un estudio de la pisada con un podólogo.","With several compensations, a gait or footprint assessment with a podiatrist is worthwhile."],
+sh_g4b:["Si tens molèsties, un podòleg et pot valorar si necessites plantilles.","Si tienes molestias, un podólogo puede valorar si necesitas plantillas.","If you have discomfort, a podiatrist can assess whether you need insoles."],
+note:["<b>Important:</b> aquest informe és una eina de prevenció i benestar, no un diagnòstic mèdic, i no substitueix un professional de la salut. La recerca (revisió Cochrane, 2022) indica que triar el calçat segons la forma de la petjada probablement fa poca o cap diferència en les lesions: pren la recomanació com una orientació de comoditat i càrrega, no com una garantia.","<b>Importante:</b> este informe es una herramienta de prevención y bienestar, no un diagnóstico médico, y no sustituye a un profesional de la salud. La investigación (revisión Cochrane, 2022) indica que elegir el calzado según la forma de la pisada probablemente supone poca o ninguna diferencia en las lesiones: toma la recomendación como una orientación de comodidad y carga, no como una garantía.","<b>Important:</b> this report is a prevention and wellbeing tool, not a medical diagnosis, and does not replace a health professional. Research (Cochrane review, 2022) suggests that choosing shoes based on foot shape probably makes little or no difference to injuries: treat the recommendation as guidance on comfort and load, not a guarantee."],
+wipe:["Esborra els vídeos d'aquest dispositiu","Borra los vídeos de este dispositivo","Delete videos from this device"],
+why:["Per què existeix PasÒptim","Por qué existe PasÒptim","Why PasÒptim exists"],
+tb1:["Corredors que van patir alguna lesió (36 estudis, 23.047 corredors)","Corredores que sufrieron alguna lesión (36 estudios, 23.047 corredores)","Runners who suffered an injury (36 studies, 23,047 runners)"],
+tb2:["Corredors recreatius amb antecedents de lesió","Corredores recreativos con antecedentes de lesión","Recreational runners with a history of injury"],
+tb3:["Població de Catalunya que segueix les recomanacions d'activitat física","Población de Cataluña que sigue las recomendaciones de actividad física","Catalan population meeting physical activity recommendations"],
+n1:["26,2%","26,2%","26.2%"],n2:["84,4%","84,4%","84.4%"],n3:["51,8%","51,8%","51.8%"],
+why_p:["Els esportistes amateurs rarament tenen accés a una anàlisi biomecànica o a un podòleg. PasÒptim és una primera orientació accessible que et deriva a un professional quan convé. Altres fonts: Peterson (2022); Relph et al., Cochrane (2022); Reglament (UE) 2016/679 (RGPD).","Los deportistas aficionados rara vez tienen acceso a un análisis biomecánico o a un podólogo. PasÒptim es una primera orientación accesible que te deriva a un profesional cuando conviene. Otras fuentes: Peterson (2022); Relph et al., Cochrane (2022); Reglamento (UE) 2016/679 (RGPD).","Amateur athletes rarely have access to biomechanical analysis or a podiatrist. PasÒptim is an accessible first guide that refers you to a professional when needed. Other sources: Peterson (2022); Relph et al., Cochrane (2022); Regulation (EU) 2016/679 (GDPR)."],
+foot:["PasÒptim · Projecte de Jan Cantarero Fernández i Iván García Román, cicle superior de condicionament físic · Sant Cugat del Vallès. Les teves imatges es processen només al teu navegador i no es pugen enlloc. Aquesta eina és orientativa i no substitueix un diagnòstic: si tens dolor persistent, consulta un fisioterapeuta, un podòleg o un metge.","PasÒptim · Proyecto de Jan Cantarero Fernández e Iván García Román, ciclo superior de acondicionamiento físico · Sant Cugat del Vallès. Tus imágenes se procesan solo en tu navegador y no se suben a ningún sitio. Esta herramienta es orientativa y no sustituye a un diagnóstico: si tienes dolor persistente, consulta a un fisioterapeuta, un podólogo o un médico.","PasÒptim · A project by Jan Cantarero Fernández and Iván García Román, higher vocational course in fitness conditioning · Sant Cugat del Vallès. Your images are processed only in your browser and are not uploaded anywhere. This tool is for guidance only and is not a diagnosis: if you have persistent pain, see a physiotherapist, podiatrist or doctor."]
+};
+/* ---------- coneixement: [ca, es, en] ---------- */
+const K={
+valgus:{t:["Genoll cap endins (valg dinàmic)","Rodilla hacia dentro (valgo dinámico)","Knee collapsing inward (dynamic valgus)"],f:"leg",a:.07,b:.11,d:1,tag:"S",
+ now:[["Dolor davanter de genoll","Sobrecàrrega de la cintilla iliotibial"],["Dolor anterior de rodilla","Sobrecarga de la cintilla iliotibial"],["Front-of-knee pain","Iliotibial band overload"]],
+ fut:[["Tendinopatia de la pota d'ansa","Més càrrega sobre els lligaments del genoll"],["Tendinopatía de la pata de ganso","Más carga sobre los ligamentos de la rodilla"],["Pes anserine tendinopathy","More load on the knee ligaments"]],
+ ex:[["Clamshell amb goma 3×15 per costat","Passos laterals amb goma 3×12","Esquat a una cama davant d'un mirall 3×8"],["Clamshell con goma 3×15 por lado","Pasos laterales con goma 3×12","Sentadilla a una pierna frente a un espejo 3×8"],["Banded clamshell 3×15 each side","Banded side steps 3×12","Single-leg squat in front of a mirror 3×8"]]},
+pelvis:{t:["Caiguda de la pelvis","Caída de la pelvis","Pelvic drop"],f:"deg",a:5,b:8,d:1,tag:"S",
+ now:[["Dolor lateral de maluc","Lumbàlgia per compensació"],["Dolor lateral de cadera","Lumbalgia por compensación"],["Lateral hip pain","Compensatory low back pain"]],
+ fut:[["Bursitis trocantèria","Dolor lumbar recurrent"],["Bursitis trocantérea","Dolor lumbar recurrente"],["Trochanteric bursitis","Recurring low back pain"]],
+ ex:[["Pont de glutis a una cama 3×10","Planxa lateral 3×30 s","Pujada lateral a l'esglaó{s} 3×10"],["Puente de glúteos a una pierna 3×10","Plancha lateral 3×30 s","Subida lateral al escalón{s} 3×10"],["Single-leg glute bridge 3×10","Side plank 3×30 s","Lateral step-up{s} 3×10"]]},
+shoulder:{t:["Espatlles inclinades","Hombros inclinados","Tilted shoulders"],f:"deg",a:6,b:9,d:1,
+ now:[["Tensió cervical i de trapezi","Molèstia lumbar d'un costat"],["Tensión cervical y de trapecio","Molestia lumbar de un lado"],["Neck and trapezius tension","One-sided low back discomfort"]],
+ fut:[["Sobrecàrrega muscular asimètrica"],["Sobrecarga muscular asimétrica"],["Asymmetric muscle overload"]],
+ ex:[["Farmer walk 3×20 m amb el mateix pes a cada mà","Estirament del quadrat lumbar 2×30 s","Remada amb goma 3×12"],["Farmer walk 3×20 m con el mismo peso en cada mano","Estiramiento del cuadrado lumbar 2×30 s","Remo con goma 3×12"],["Farmer walk 3×20 m with equal weight in each hand","Quadratus lumborum stretch 2×30 s","Band row 3×12"]]},
+sway:{t:["Balanceig lateral del tronc","Balanceo lateral del tronco","Lateral trunk sway"],f:"hw",a:.3,b:.5,d:1,tag:"S",
+ now:[["Dolor lateral de maluc","Lumbàlgia"],["Dolor lateral de cadera","Lumbalgia"],["Lateral hip pain","Low back pain"]],
+ fut:[["Sobrecàrrega del glute mitjà"],["Sobrecarga del glúteo medio"],["Gluteus medius overload"]],
+ ex:[["Pallof press 3×10 per costat","Planxa lateral 3×30 s","Farmer walk a una mà 3×20 m"],["Pallof press 3×10 por lado","Plancha lateral 3×30 s","Farmer walk a una mano 3×20 m"],["Pallof press 3×10 each side","Side plank 3×30 s","Single-arm farmer walk 3×20 m"]]},
+wide:{t:["Base de suport massa ampla","Base de apoyo demasiado ancha","Base of support too wide"],f:"hw",a:1.2,b:1.6,d:1,tag:"S",
+ now:[["Dolor lateral de maluc","Fatiga dels adductors"],["Dolor lateral de cadera","Fatiga de los aductores"],["Lateral hip pain","Adductor fatigue"]],
+ fut:[["Sobrecàrrega de pelvis i zona lumbar"],["Sobrecarga de pelvis y zona lumbar"],["Pelvis and lower back overload"]],
+ ex:[["Caminar sobre una línia recta 3×10 m","Esquat amb pilota entre els genolls 3×12","Equilibri a una cama 3×30 s"],["Caminar sobre una línea recta 3×10 m","Sentadilla con balón entre las rodillas 3×12","Equilibrio a una pierna 3×30 s"],["Walk along a straight line 3×10 m","Ball-squeeze squat 3×12","Single-leg balance 3×30 s"]]},
+narrow:{t:["Base massa estreta (passos creuats)","Base demasiado estrecha (pasos cruzados)","Base too narrow (crossover steps)"],f:"hw",a:.35,b:.15,d:-1,tag:"S",
+ now:[["Síndrome de la cintilla iliotibial","Dolor lateral de turmell"],["Síndrome de la cintilla iliotibial","Dolor lateral de tobillo"],["Iliotibial band syndrome","Lateral ankle pain"]],
+ fut:[["Fractura d'estrès de tíbia","Esquinços de turmell repetits"],["Fractura de estrés de tibia","Esguinces de tobillo repetidos"],["Tibial stress fracture","Recurring ankle sprains"]],
+ ex:[["Caminar lateral amb goma 3×12 passos","Equilibri a una cama 3×30 s","Abducció de maluc 3×15"],["Caminar lateral con goma 3×12 pasos","Equilibrio a una pierna 3×30 s","Abducción de cadera 3×15"],["Banded side-walks 3×12 steps","Single-leg balance 3×30 s","Hip abduction 3×15"]]},
+fwd:{t:["Tronc inclinat endavant","Tronco inclinado hacia delante","Trunk leaning forward"],f:"deg",a:10,b:15,d:1,tag:"C",
+ now:[["Lumbàlgia","Tensió als flexors del maluc"],["Lumbalgia","Tensión en los flexores de la cadera"],["Low back pain","Hip flexor tightness"]],
+ fut:[["Sobrecàrrega lumbar crònica"],["Sobrecarga lumbar crónica"],["Chronic lumbar overload"]],
+ ex:[["Estirament de psoes 3×30 s per costat","Extensió toràcica sobre un rodet 2×10","Pont de glutis 3×15"],["Estiramiento de psoas 3×30 s por lado","Extensión torácica sobre rodillo 2×10","Puente de glúteos 3×15"],["Hip flexor stretch 3×30 s each side","Thoracic extension on a roller 2×10","Glute bridge 3×15"]]},
+bwd:{t:["Tronc inclinat endarrere","Tronco inclinado hacia atrás","Trunk leaning backward"],f:"deg",a:4,b:8,d:1,
+ now:[["Compressió lumbar"],["Compresión lumbar"],["Lumbar compression"]],
+ fut:[["Dolor lumbar crònic"],["Dolor lumbar crónico"],["Chronic low back pain"]],
+ ex:[["Dead bug 3×10","Planxa frontal 3×30 s","Pont de glutis 3×15"],["Dead bug 3×10","Plancha frontal 3×30 s","Puente de glúteos 3×15"],["Dead bug 3×10","Front plank 3×30 s","Glute bridge 3×15"]]},
+head:{t:["Cap avançat","Cabeza adelantada","Forward head"],f:"tr",a:.2,b:.32,d:1,
+ now:[["Cefalea tensional","Dolor cervical"],["Cefalea tensional","Dolor cervical"],["Tension headache","Neck pain"]],
+ fut:[["Cervicàlgia crònica"],["Cervicalgia crónica"],["Chronic neck pain"]],
+ ex:[["Retracció cervical (chin tuck) 3×10 de 5 s","Remada amb goma 3×12","Estirament de pectoral al marc de la porta 2×30 s"],["Retracción cervical (chin tuck) 3×10 de 5 s","Remo con goma 3×12","Estiramiento de pectoral en el marco de la puerta 2×30 s"],["Chin tucks 3×10 holding 5 s","Band row 3×12","Doorway pec stretch 2×30 s"]]},
+rom:{t:["Genolls rígids (poca flexió)","Rodillas rígidas (poca flexión)","Stiff knees (little flexion)"],f:"rom",a:45,b:35,d:-1,tag:"C",
+ now:[["Impacte alt a les articulacions","Dolor lumbar"],["Impacto alto en las articulaciones","Dolor lumbar"],["High joint impact","Low back pain"]],
+ fut:[["Desgast de genoll i maluc"],["Desgaste de rodilla y cadera"],["Knee and hip wear"]],
+ ex:[["Esquat goblet 3×10","Pes mort romanès lleuger 3×10","Mobilitat de turmell contra la paret 2×10"],["Sentadilla goblet 3×10","Peso muerto rumano ligero 3×10","Movilidad de tobillo contra la pared 2×10"],["Goblet squat 3×10","Light Romanian deadlift 3×10","Wall ankle mobility 2×10"]]},
+over:{t:["Sobrepas (peu massa endavant)","Sobrepaso (pie demasiado adelantado)","Overstriding (foot lands too far ahead)"],f:"leg",a:.5,b:.65,d:1,tag:"C",
+ now:[["Periostitis tibial (dolor a la canyella)","Dolor al taló"],["Periostitis tibial (dolor en la espinilla)","Dolor en el talón"],["Shin splints","Heel pain"]],
+ fut:[["Fractura d'estrès de tíbia"],["Fractura de estrés de tibia"],["Tibial stress fracture"]],
+ ex:[["Passos curts amb metrònom (+5–10% de cadència)","Dorsiflexions de turmell amb goma 3×15","Pujada d'esglaons{s} 3×10"],["Pasos cortos con metrónomo (+5–10% de cadencia)","Dorsiflexiones de tobillo con goma 3×15","Subida de escalones{s} 3×10"],["Short steps to a metronome (+5–10% cadence)","Banded ankle dorsiflexion 3×15","Step-ups{s} 3×10"]]},
+cad:{t:["Cadència baixa","Cadencia baja","Low cadence"],f:"cad",a:95,b:85,d:-1,
+ now:[["Més temps de càrrega a cada pas"],["Más tiempo de carga en cada paso"],["Longer loading time per step"]],
+ fut:[["Sobrecàrrega de genoll i maluc"],["Sobrecarga de rodilla y cadera"],["Knee and hip overload"]],
+ ex:[["Caminar amb metrònom a 105–115 ppm durant 10 min","Intervals de marxa ràpida 5×1 min"],["Caminar con metrónomo a 105–115 ppm durante 10 min","Intervalos de marcha rápida 5×1 min"],["Walk to a metronome at 105–115 spm for 10 min","Brisk-walking intervals 5×1 min"]]},
+pron:{t:["Taló cap a fora (pronació, orientatiu)","Talón hacia fuera (pronación, orientativo)","Heel tilting outward (pronation, indicative)"],f:"deg",a:7,b:11,d:1,tag:"S",
+ now:[["Dolor a l'arc del peu o fascitis plantar","Dolor medial de genoll"],["Dolor en el arco del pie o fascitis plantar","Dolor medial de rodilla"],["Arch pain or plantar fasciitis","Medial knee pain"]],
+ fut:[["Tendinopatia del tibial posterior"],["Tendinopatía del tibial posterior"],["Posterior tibial tendinopathy"]],
+ ex:[["Curl d'arc del peu (short foot) 3×10","Elevacions de taló a una cama 3×12","Abducció de maluc amb goma 3×15"],["Short foot (arco del pie) 3×10","Elevaciones de talón a una pierna 3×12","Abducción de cadera con goma 3×15"],["Short-foot exercise 3×10","Single-leg calf raise 3×12","Banded hip abduction 3×15"]]},
+supin:{t:["Taló cap a dins (supinació, orientatiu)","Talón hacia dentro (supinación, orientativo)","Heel tilting inward (supination, indicative)"],f:"deg",a:7,b:11,d:1,tag:"C",
+ now:[["Sobrecàrrega lateral del peu","Esquinços de turmell"],["Sobrecarga lateral del pie","Esguinces de tobillo"],["Lateral foot overload","Ankle sprains"]],
+ fut:[["Tendinopatia dels peronis"],["Tendinopatía de los peroneos"],["Peroneal tendinopathy"]],
+ ex:[["Equilibri a una cama sobre superfície inestable 3×30 s","Eversió de turmell amb goma 3×15","Mobilitat de turmell 2×10"],["Equilibrio a una pierna sobre superficie inestable 3×30 s","Eversión de tobillo con goma 3×15","Movilidad de tobillo 2×10"],["Single-leg balance on an unstable surface 3×30 s","Banded ankle eversion 3×15","Ankle mobility 2×10"]]}};
+const Z={genoll:["valgus","rom","over"],maluc:["pelvis","sway","wide"],canyella:["over","narrow","cad"],peu:["narrow","over","pron","supin"],esquena:["fwd","bwd","sway","shoulder"],coll:["head","shoulder"]};
+const FM={deg:v=>v.toFixed(1)+"°",leg:v=>pc(v)+" "+t("u_leg"),tr:v=>pc(v)+" "+t("u_tr"),hw:v=>v.toFixed(2)+"× "+t("u_hw"),rom:v=>v.toFixed(0)+"° "+t("u_rom"),cad:v=>v.toFixed(0)+" "+t("spm")};
+const pc=v=>(v*100).toFixed(0)+"%";
+
+/* ---------- idioma ---------- */
+let LI=0,sk="",last=null,M=null,ts=0;
+try{LI=+localStorage.getItem("pl")||0}catch(e){}
+const t=k=>D[k][LI];
+const st=k=>{sk=k;$("#st").textContent=k?t(k):""};
+const have={};
+$("#stage").innerHTML=["front","side","back"].map(k=>`<div class="slot"><b data-t="v_${k}"></b><small data-t="s_${k}"></small><br><label class="pick"><span data-t="pick"></span><input type="file" id="f_${k}" accept="video/*"></label><div class="vw" id="w_${k}"><video id="v_${k}" muted playsinline controls></video><canvas id="c_${k}"></canvas></div></div>`).join("");
+$("#mols").innerHTML=Object.keys(Z).map(z=>`<label><input type="checkbox" class="mol" value="${z}"><span data-t="m_${z}"></span></label>`).join("");
+function apply(){
+ document.documentElement.lang=["ca","es","en"][LI];document.title=t("title");
+ document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+ document.querySelectorAll("[data-h]").forEach(e=>e.innerHTML=t(e.dataset.h));
+ document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
+ document.querySelectorAll(".lang button").forEach((b,i)=>b.setAttribute("aria-pressed",i==LI));
+ st(sk);if(last)show(last.r,last.P)}
+document.querySelectorAll(".lang button").forEach((b,i)=>b.onclick=()=>{LI=i;try{localStorage.setItem("pl",i)}catch(e){}apply()});
+
+/* ---------- formulari i vídeos ---------- */
+const chk=()=>{const a=+$("#age").value;$("#tut").style.display=a>0&&a<18?"flex":"none";$("#go").disabled=!(have.front&&have.side&&$("#ok1").checked&&a>=8&&(a>=18||$("#ok2").checked))};
+for(const k of ["front","side","back"]){$("#f_"+k).onchange=e=>{const f=e.target.files[0];if(!f)return;$("#v_"+k).src=URL.createObjectURL(f);$("#w_"+k).classList.add("on");have[k]=1;chk()}}
+["#age","#ok1","#ok2"].forEach(x=>$(x).oninput=chk);
+
+async function load(){
+ M=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs");
+ const fs=await M.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+ const o=d=>({baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate:d},runningMode:"VIDEO",numPoses:1});
+ try{M.lmk=await M.PoseLandmarker.createFromOptions(fs,o("GPU"))}catch(e){M.lmk=await M.PoseLandmarker.createFromOptions(fs,o("CPU"))}}
+function run(k,prog){return new Promise(async res=>{
+ const v=$("#v_"+k),c=$("#c_"+k),x=c.getContext("2d"),du=new M.DrawingUtils(x),fr=[];let last=-1;
+ c.width=v.videoWidth;c.height=v.videoHeight;v.controls=false;v.currentTime=0;v.playbackRate=1;
+ v.onended=()=>{v.controls=true;x.clearRect(0,0,c.width,c.height);res({fr,W:v.videoWidth,H:v.videoHeight})};
+ const loop=()=>{if(v.ended)return;
+  if(v.currentTime!==last){last=v.currentTime;ts=Math.max(ts+1,performance.now()|0);
+   const l=M.lmk.detectForVideo(v,ts).landmarks[0];x.clearRect(0,0,c.width,c.height);
+   if(l){du.drawConnectors(l,M.PoseLandmarker.POSE_CONNECTIONS,{color:"#ffffffcc",lineWidth:3});du.drawLandmarks(l,{color:"#2447f5",radius:3});fr.push({t:last,lm:l})}
+   prog(last/v.duration)}
+  requestAnimationFrame(loop)};
+ await v.play();loop()})}
+
+/* ---------- càlculs ---------- */
+const vis=(l,ids)=>ids.every(i=>(l[i].visibility??1)>.5);
+const q=(a,p)=>{if(!a.length)return NaN;const s=[...a].sort((x,y)=>x-y);return s[Math.floor(p*(s.length-1))]};
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN;
+const ang=(a,b,c)=>{const u={x:a.x-b.x,y:a.y-b.y},w={x:c.x-b.x,y:c.y-b.y};return Math.acos(Math.max(-1,Math.min(1,(u.x*w.x+u.y*w.y)/((Math.hypot(u.x,u.y)*Math.hypot(w.x,w.y))||1))))*57.3};
+
+function front({fr,W,H}){const a={pel:[],sh:[],sw:[],wd:[],vl:[]};
+ for(const f of fr){const l=f.lm;if(!vis(l,[11,12,23,24,25,26,27,28]))continue;
+  const [ls,rs,lh,rh,lk,rk,la,ra]=[11,12,23,24,25,26,27,28].map(i=>({x:l[i].x*W,y:l[i].y*H}));
+  const hw=Math.abs(lh.x-rh.x);if(hw<W*.02)continue;const mh=(lh.x+rh.x)/2;
+  const tt=(p,r)=>Math.abs(Math.atan2(r.y-p.y,Math.abs(r.x-p.x)))*57.3;
+  a.pel.push(tt(lh,rh));a.sh.push(tt(ls,rs));a.sw.push(((ls.x+rs.x)/2-mh)/hw);a.wd.push(Math.abs(la.x-ra.x)/hw);
+  for(const [h,k,n,s] of [[lh,lk,la,lh.x>rh.x?1:-1],[rh,rk,ra,rh.x>lh.x?1:-1]]){
+   const lx=h.x+(n.x-h.x)*(k.y-h.y)/((n.y-h.y)||1);a.vl.push(-(k.x-lx)*s/Math.hypot(n.x-h.x,n.y-h.y))}}
+ return a}
+
+function side({fr,W,H}){const a={ln:[],hd:[],k:[[],[]],S:[],bp:[]};let d=0;
+ const ok=fr.filter(f=>vis(f.lm,[0,11,12,23,24,25,26,27,28]));
+ for(const f of ok)d+=Math.sign(f.lm[0].x-(f.lm[23].x+f.lm[24].x)/2);d=d>=0?1:-1;
+ for(const f of ok){const l=f.lm,g=i=>({x:l[i].x*W,y:l[i].y*H});
+  const s={x:(g(11).x+g(12).x)/2,y:(g(11).y+g(12).y)/2},h={x:(g(23).x+g(24).x)/2,y:(g(23).y+g(24).y)/2},tl=Math.hypot(s.x-h.x,s.y-h.y);if(tl<10)continue;
+  a.ln.push(Math.atan2((s.x-h.x)*d,h.y-s.y)*57.3);a.hd.push(((g(7).x+g(8).x)/2-s.x)*d/tl);
+  a.k[0].push(180-ang(g(23),g(25),g(27)));a.k[1].push(180-ang(g(24),g(26),g(28)));
+  a.bp.push((Math.max(g(27).y,g(28).y)-g(0).y)/.93);
+  const sp=(g(27).x-g(28).x)*d,lead=sp>0?g(27):g(28),ll=(Math.hypot(g(23).x-g(27).x,g(23).y-g(27).y)+Math.hypot(g(24).x-g(28).x,g(24).y-g(28).y))/2;
+  a.S.push({t:f.t,sp,ov:(lead.x-h.x)*d/ll})}
+ const S=a.S,mx=Math.max(...S.map(s=>Math.abs(s.sp))),pk=[];
+ for(let i=1;i<S.length-1;i++){const v=Math.abs(S[i].sp);if(v>.35*mx&&v>=Math.abs(S[i-1].sp)&&v>Math.abs(S[i+1].sp)&&(!pk.length||S[i].t-pk[pk.length-1].t>.25))pk.push(S[i])}
+ a.cad=pk.length>2?(pk.length-1)/(pk[pk.length-1].t-pk[0].t)*60:NaN;a.ov=q(pk.map(p=>p.ov),.5);
+ a.stp=q(pk.map(p=>Math.abs(p.sp)),.5)/q(a.bp,.5);return a}
+
+/* vista posterior: inclinació del taló respecte de la tíbia (positiu = pronació) */
+function back({fr,W,H}){const e=[[],[]];
+ for(const f of fr){const l=f.lm;if(!vis(l,[23,24,25,26,27,28,29,30]))continue;
+  const g=i=>({x:l[i].x*W,y:l[i].y*H}),m=(g(23).x+g(24).x)/2;
+  [[23,25,27,29],[24,26,28,30]].forEach(([h,k,n,c],j)=>{const o=Math.sign(g(h).x-m)||1,K_=g(k),A=g(n),C=g(c);
+   e[j].push((Math.atan2(C.x-A.x,C.y-A.y)-Math.atan2(A.x-K_.x,A.y-K_.y))*57.3*o)})}
+ return avg([q(e[0],.5),q(e[1],.5)])}
+
+function analyze(F,S,B){
+ const m=q(F.wd,.5);
+ const V={valgus:q(F.vl,.85),pelvis:q(F.pel,.9),shoulder:q(F.sh,.9),sway:q(F.sw,.95)-q(F.sw,.05),wide:m,narrow:m,
+  fwd:avg(S.ln),bwd:-avg(S.ln),head:q(S.hd,.5),rom:(q(S.k[0],.95)-q(S.k[0],.05)+q(S.k[1],.95)-q(S.k[1],.05))/2,over:S.ov,cad:S.cad,pron:B,supin:-B};
+ const out=[],oks=[];
+ for(const [k,e] of Object.entries(K)){const v=V[k];if(!isFinite(v))continue;
+  const sev=e.d*v>=e.d*e.b?2:e.d*v>=e.d*e.a?1:0;(sev?out:oks).push({k,e,v,sev})}
+ return {bad:out.sort((x,y)=>y.sev-x.sev),oks,m:{step:S.stp,cad:S.cad}}}
+
+/* ---------- informe ---------- */
+const li=a=>"<ul>"+a.map(s=>"<li>"+s+"</li>").join("")+"</ul>";
+function show({bad,oks,m},P){
+ const hit=k=>P.mol.filter(z=>Z[z].includes(k)).map(z=>t("m_"+z));
+ const sf=x=>x.replace("{s}",P.h?` (≈${Math.round(P.h*.25)} cm)`:"");
+ const sc=Math.max(0,100-bad.reduce((n,b)=>n+b.sev*7,0)),col=sc>=80?"var(--ok)":sc>=60?"var(--mid)":"var(--bad)";
+ $("#ring").style.background=`conic-gradient(${col} ${sc*3.6}deg,var(--line) 0)`;$("#sc").textContent=sc;
+ $("#verd").textContent=t(sc>=80?"v_hi":sc>=60?"v_mid":"v_lo");
+ $("#sumy").textContent=bad.length?t("sy_n").replace("{n}",bad.length):t("sy_0");
+ $("#okc").innerHTML=oks.map(o=>`<span class="chip">✓ ${o.e.t[LI]}</span>`).join("");
+ const fi=[[t("f_act"),t(["o_walk","o_run","o_both"][P.ai])],[t("f_age"),P.age],[t("f_sex"),P.sex?t("o_"+P.sex):"–"],[t("f_h"),P.h?P.h+" cm":"–"],[t("f_wt"),P.wt?P.wt+" kg":"–"],
+  [t("f_pain"),P.mol.length?P.mol.map(z=>t("m_"+z)).join(", "):t("none")],[t("fi_step"),P.h&&isFinite(m.step)?"≈"+Math.round(m.step*P.h)+" cm":"–"],[t("f_cad"),isFinite(m.cad)?m.cad.toFixed(0)+" "+t("spm"):"–"]];
+ $("#fich").innerHTML=fi.map(([a,b])=>`<div><small>${a}</small><b>${b}</b></div>`).join("");
+ $("#fl").innerHTML=bad.map(({k,e,v,sev})=>{const ex=[...e.ex[LI]];if(P.sex=="f"&&(k=="valgus"||k=="pelvis"))ex.push(t("ex_f"));
+  return `<article class="f s${sev}"><h3>${e.t[LI]}${hit(k).length?`<span class="hit">${t("hit")}: ${hit(k).join(", ")}</span>`:""}</h3><div class="v">${t("sev"+sev)} · ${t("val")}: ${FM[e.f](v)}</div>
+  <div class="cols"><div><h4>${t("col_now")}</h4>${li(e.now[LI])}</div><div><h4>${t("col_fut")}</h4>${li(e.fut[LI])}</div></div>
+  <h4>${t("col_ex")}</h4>${li(ex.map(sf))}</article>`}).join("")||`<p>${t("r_none")}</p>`;
+ const refer=bad.some(b=>b.sev==2)||P.mol.length||P.long||sc<60;
+ $("#ref").innerHTML=refer?`<div class="note"><b>${t("ref_t")}</b> ${P.mol.length||P.long?t("ref_p1")+(P.long?t("ref_p2"):"")+". ":""}${P.prev?t("ref_p3")+" ":""}${t("ref_p4")}</div>`:`<div class="note">${t("ref_ok")}</div>`;
+ const nS=bad.filter(b=>b.e.tag=="S").length,nC=bad.filter(b=>b.e.tag=="C").length,s=nS&&nC?"SC":nS?"S":nC?"C":"N";
+ const X=[];if(P.ai>0)X.push(t("sh_run"));if(P.ai==0)X.push(t("sh_walk"));if(P.wt>=85)X.push(t("sh_wt"));
+ $("#shoe").innerHTML=`<h3>${t("sh_"+s+"_t")}</h3><p>${t("sh_"+s+"_p")}</p>${li([...X,t("sh_g1"),t("sh_g2"),t("sh_g3"),t(nS>1?"sh_g4a":"sh_g4b")])}`;
+ $("#res").style.display="block"}
+
+$("#go").onclick=async()=>{
+ const pg=$("#pg"),ks=["front","side"].concat(have.back?["back"]:[]),R={};
+ $("#bar").style.display="block";$("#go").disabled=true;
+ try{
+  if(!M){st("st_load");await load()}
+  for(let i=0;i<ks.length;i++){st("st_"+ks[i]);R[ks[i]]=await run(ks[i],p=>pg.style.width=(i+p)/ks.length*100+"%")}
+  if(R.front.fr.length<20||R.side.fr.length<20){st("st_fail");return}
+  const B=R.back&&R.back.fr.length>=20?back(R.back):NaN;
+  const P={ai:+$("#act").value,age:+$("#age").value,sex:$("#sex").value,h:+$("#h").value||0,wt:+$("#wt").value||0,prev:$("#prev").checked,long:$("#long").checked,mol:[...document.querySelectorAll(".mol:checked")].map(c=>c.value)};
+  last={r:analyze(front(R.front),side(R.side),B),P};show(last.r,last.P);$("#res").scrollIntoView({behavior:"smooth"});st("st_done");
+ }catch(e){console.error(e);st("st_err")}finally{chk()}};
+
+$("#wipe").onclick=()=>{for(const k of ["front","side","back"]){const v=$("#v_"+k);v.pause();URL.revokeObjectURL(v.src);v.removeAttribute("src");v.load();$("#w_"+k).classList.remove("on");$("#f_"+k).value="";have[k]=0}chk();st("st_wiped")};
+apply();
+</script>
+</body>
+</html>
