@@ -4,132 +4,304 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PasÒptim</title>
+<meta name="description" content="PasÒptim: anàlisi de la marxa amb vídeo, exercicis i calçat orientatiu.">
+<link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e9eef2;--ink:#14202b;--mut:#5b6b79;--card:#fff;--ac:#2447f5;--ok:#1f9d6b;--mid:#e59a00;--bad:#d62e3a;--line:#cfd8e0}
-@media(prefers-color-scheme:dark){:root{--bg:#10171e;--ink:#e8eef3;--mut:#93a4b3;--card:#18222c;--ac:#6f8cff;--line:#2a3845}}
+:root{--navy:#0e2340;--teal:#0fb5a6;--teal2:#0a8f85;--bg:#f4f7f9;--card:#fff;--ink:#0e2340;--mut:#5a6b7b;--line:#dbe4ea;--ok:#1f9d6b;--mid:#e59a00;--bad:#d62e3a;color-scheme:light}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5}
-.w{max-width:1040px;margin:0 auto;padding:0 20px}
-h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:.98;font-weight:800;letter-spacing:-.03em;margin:28px 0 16px;max-width:14ch}
-h2{font-size:1.5rem;margin:48px 0 14px;letter-spacing:-.01em}
-.lead{font-size:1.15rem;color:var(--mut);max-width:60ch;margin:0 0 28px}
-.bar0{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:28px}
-.bar0 img{width:170px;height:auto;border-radius:18px;background:#fff;padding:8px;display:block}
-.lang{display:flex;gap:4px;background:var(--card);border-radius:999px;padding:4px}
-.lang button{font:inherit;font-weight:700;font-size:.85rem;border:0;border-radius:999px;padding:6px 14px;background:none;color:var(--ink);cursor:pointer}
-.lang button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-.form{background:var(--card);border-radius:18px;padding:18px 20px;margin:0 0 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.55}
+section[id],header[id]{scroll-margin-top:76px}
+.w{max-width:1120px;margin:0 auto;padding:0 22px}
+h1{font-size:clamp(2.5rem,6vw,4.4rem);line-height:1;font-weight:800;letter-spacing:-.035em;margin:14px 0 18px}
+h2{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.08;letter-spacing:-.025em;margin:0 0 10px;font-weight:800}
+h3{margin:0 0 6px;font-size:1.15rem}
+.sub{color:var(--mut);font-size:1.1rem;max-width:62ch;margin:0 0 30px}
+.sec{padding:88px 0}.alt{background:#fff}
+.dark{background:var(--navy);color:#fff}.dark .sub{color:#b9c8d8}
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nv{display:flex;align-items:center;gap:18px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);font-weight:800;font-size:1.35rem;letter-spacing:-.02em}
+.brand img{height:46px;width:auto}.brand b{color:var(--teal)}
+#menu{display:flex;gap:4px;margin-left:auto}
+#menu a{color:var(--navy);text-decoration:none;font-size:.95rem;padding:8px 12px;border-radius:10px}
+#menu a:hover{background:var(--bg)}
+.nr{display:flex;align-items:center;gap:10px}
+.lang{display:flex;gap:2px;background:var(--bg);border-radius:999px;padding:3px}
+.lang button{font:inherit;font-weight:700;font-size:.8rem;border:0;border-radius:999px;padding:5px 11px;background:none;color:var(--navy);cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--navy);color:#fff}
+#burger{display:none;border:0;background:var(--bg);border-radius:10px;width:42px;height:42px;cursor:pointer}
+#burger span,#burger span:before,#burger span:after{display:block;width:20px;height:2px;background:var(--navy);margin:auto;position:relative;content:""}
+#burger span:before{position:absolute;top:-6px;left:0}#burger span:after{position:absolute;top:6px;left:0}
+@media(max-width:1020px){#burger{display:block}#menu{display:none;position:absolute;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:10px 22px 18px;border-bottom:1px solid var(--line);margin:0}#menu.open{display:flex}}
+/* buttons */
+.btn{display:inline-block;font:inherit;font-weight:700;text-decoration:none;border:0;border-radius:14px;padding:14px 26px;background:var(--teal);color:#fff;cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:2px solid currentColor;color:inherit}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+/* hero */
+.hero{background:radial-gradient(1200px 500px at 85% -10%,#15527a 0,transparent 60%),var(--navy);color:#fff;padding:72px 0 84px;overflow:hidden}
+.hg{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+@media(max-width:900px){.hg{grid-template-columns:1fr}}
+.pill{display:inline-block;background:#ffffff1a;border:1px solid #ffffff33;border-radius:999px;padding:5px 14px;font-size:.85rem}
+.hero .lead{font-size:1.2rem;color:#c9d7e5;max-width:54ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0}
+.trust{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 20px;color:#b9c8d8;font-size:.92rem}
+.trust li:before{content:"✓ ";color:var(--teal)}
+.hv{position:relative;background:#ffffff0f;border:1px solid #ffffff22;border-radius:28px;padding:20px;aspect-ratio:1/1.05}
+.hv svg{width:100%;height:100%}
+.fc{position:absolute;background:#fff;color:var(--navy);font-weight:700;font-size:.85rem;border-radius:12px;padding:6px 12px;box-shadow:0 8px 24px #0005;animation:fl 4s ease-in-out infinite}
+.c1{top:16%;left:-4%}.c2{top:46%;right:-3%;animation-delay:-1.3s}.c3{bottom:14%;left:2%;animation-delay:-2.6s}
+@keyframes fl{50%{transform:translateY(-8px)}}
+.th,.sh,.ar,.al{transform-box:view-box;animation-duration:1.2s;animation-iteration-count:infinite;animation-timing-function:ease-in-out;animation-direction:alternate}
+.th{transform-origin:100px 150px;animation-name:th}.sh{transform-origin:100px 215px;animation-name:sh}
+.ar{transform-origin:100px 74px;animation-name:ar}
+.b{animation-delay:-1.2s}
+@keyframes th{from{transform:rotate(-26deg)}to{transform:rotate(26deg)}}
+@keyframes sh{from{transform:rotate(0)}to{transform:rotate(-34deg)}}
+@keyframes ar{from{transform:rotate(22deg)}to{transform:rotate(-22deg)}}
+/* cards */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:900px){.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px}
+.alt .card{background:var(--bg);border-color:transparent}
+.dark .card{background:#ffffff0f;border-color:#ffffff22}
+.num{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--teal);color:#fff;font-weight:800;margin-bottom:12px}
+.card p{margin:0;color:var(--mut)}.dark .card p{color:#b9c8d8}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.th,.sh,.ar,.fc{animation:none}html{scroll-behavior:auto}}
+/* demo */
+.demo{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:start}
+@media(max-width:900px){.demo{grid-template-columns:1fr}}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{font:inherit;font-weight:600;border:2px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:8px 18px;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.fig{background:linear-gradient(160deg,#eaf6f5,#f4f7f9);border-radius:24px;padding:12px;aspect-ratio:1/1.1}
+.fig svg{width:100%;height:100%}
+.src{color:var(--mut);font-size:.85rem}
+.gg{margin:16px 0}.gh{display:flex;justify-content:space-between;gap:10px;font-size:.95rem}
+.gw{position:relative;margin-top:8px}
+.gz{display:flex;height:10px;border-radius:9px;overflow:hidden}.gz i{display:block;height:100%}
+.gm{position:absolute;top:-4px;width:5px;height:18px;border-radius:3px;background:var(--navy);transform:translateX(-50%);border:1px solid #fff}
+.s0{color:var(--ok)}.s1{color:var(--mid)}.s2{color:var(--bad)}
+/* form + tool */
+.form{background:var(--card);border-radius:22px;padding:22px;margin:0 0 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px 16px;border:1px solid var(--line)}
 .form label{display:flex;flex-direction:column;font-size:.9rem;color:var(--mut);gap:4px}
-.form input,.form select{font:inherit;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.form input,.form select,.fm input,.fm select,.fm textarea{font:inherit;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
 .form .full{grid-column:1/-1}
 .checks{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:4px}
-.checks label{flex-direction:row;align-items:center;gap:6px;color:var(--ink)}
-.checks input{width:auto}
+.checks label,.consent label{flex-direction:row;align-items:center;gap:6px;color:var(--ink);display:flex}
+.checks input,.consent input{width:auto}
 .stage{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:800px){.stage,.form{grid-template-columns:1fr}}
-.slot{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:14px}
+.slot{background:var(--card);border:2px dashed var(--line);border-radius:20px;padding:16px}
 .slot b{display:block;font-size:1.05rem}.slot small{color:var(--mut)}
 .vw{position:relative;margin-top:10px;border-radius:12px;overflow:hidden;background:#0003;aspect-ratio:3/4;display:none}
-.vw.on{display:block}
-.vw video,.vw canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.pick{display:inline-block;margin-top:8px;padding:9px 16px;border-radius:999px;background:var(--ink);color:var(--bg);font-weight:600;cursor:pointer}
-.pick:focus-within,button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.vw.on{display:block}.vw video,.vw canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pick{display:inline-block;margin-top:8px;padding:9px 16px;border-radius:999px;background:var(--navy);color:#fff;font-weight:600;cursor:pointer}
+.pick:focus-within{outline:3px solid var(--teal);outline-offset:2px}
 input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
 .tips{color:var(--mut);font-size:.95rem;margin:16px 0}
 .consent{margin:14px 0;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
-.consent label{display:flex;gap:8px;align-items:flex-start}
-button#go{font:inherit;font-weight:700;font-size:1.05rem;border:0;border-radius:14px;padding:14px 28px;background:var(--ac);color:#fff;cursor:pointer}
-button#go:disabled{opacity:.4;cursor:not-allowed}
+.consent label{align-items:flex-start}
 .bar{height:8px;border-radius:9px;background:var(--line);margin-top:14px;overflow:hidden;display:none}
-.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .2s}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .2s}
 #st{color:var(--mut);margin-top:8px;min-height:1.5em}
-#res{display:none}
-.top{display:flex;gap:28px;align-items:center;flex-wrap:wrap;background:var(--card);border-radius:22px;padding:24px}
+#res{display:none;margin-top:40px}
+#res h3.rt{font-size:1.5rem;margin:36px 0 12px}
+.top{display:flex;gap:28px;align-items:center;flex-wrap:wrap;background:var(--card);border-radius:22px;padding:24px;border:1px solid var(--line)}
 .ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;flex:none}
 .ring span{width:98px;height:98px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.2rem;font-weight:800}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
-.chip{font-size:.85rem;padding:3px 10px;border-radius:999px;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}.chip{font-size:.85rem;padding:3px 10px;border-radius:999px;background:var(--bg)}
 .fich{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:800px){.fich{grid-template-columns:1fr 1fr}}
-.fich div{background:var(--card);border-radius:14px;padding:12px 14px}
-.fich small{display:block;color:var(--mut);font-size:.8rem}
-.f{background:var(--card);border-radius:16px;padding:20px 22px;margin:12px 0;border-left:8px solid var(--mid)}
-.f.s2{border-color:var(--bad)}
-.f h3{margin:0;font-size:1.2rem}.f .v{color:var(--mut);font-size:.95rem}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:10px}
-@media(max-width:700px){.cols{grid-template-columns:1fr}}
+.fich div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.fich small{display:block;color:var(--mut);font-size:.8rem}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:4px 30px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:8px 24px}
+@media(max-width:800px){.gl{grid-template-columns:1fr}}
+.f{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:12px 0;border-left:8px solid var(--mid)}.f.s2{border-left-color:var(--bad)}
+.f .v{color:var(--mut);font-size:.95rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:10px}@media(max-width:700px){.cols{grid-template-columns:1fr}}
 .f h4{margin:10px 0 2px;font-size:.95rem}.f ul{margin:0;padding-left:18px}
-.hit{display:inline-block;margin-left:8px;font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--ac);color:#fff;vertical-align:middle}
-.note{background:var(--card);border-left:8px solid var(--ac);border-radius:14px;padding:14px 18px;margin:12px 0;font-size:.95rem}
-.shoe{background:var(--ink);color:var(--bg);border-radius:22px;padding:26px}
-.shoe h3{margin:0 0 6px;font-size:1.6rem}
-.ghost{font:inherit;background:none;border:2px solid var(--ink);color:var(--ink);border-radius:12px;padding:8px 16px;cursor:pointer;margin-top:14px}
-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;font-size:.95rem}
-td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
-.src{color:var(--mut);font-size:.85rem}
-footer{color:var(--mut);font-size:.9rem;margin:48px 0;border-top:1px solid var(--line);padding-top:18px}
+.hit{display:inline-block;margin-left:8px;font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--teal);color:#fff;vertical-align:middle}
+.note{background:var(--card);border-left:8px solid var(--teal);border-radius:14px;padding:14px 18px;margin:12px 0;font-size:.95rem;border:1px solid var(--line);border-left-width:8px}
+.shoe{background:var(--navy);color:#fff;border-radius:24px;padding:28px}.shoe h3{font-size:1.6rem}.shoe p{color:#c9d7e5}
+.sp{display:grid;gap:8px;margin:14px 0}.sp div{display:grid;grid-template-columns:130px 1fr 60px;gap:10px;align-items:center;font-size:.9rem}
+.sp i{height:8px;background:#ffffff26;border-radius:9px;overflow:hidden}.sp b{display:block;height:100%;background:var(--teal);border-radius:9px}.sp em{font-style:normal;color:#b9c8d8;text-align:right}
+.shoe ul{padding-left:18px;margin:10px 0 0}
+.ghost2{font:inherit;background:none;border:2px solid var(--navy);color:var(--navy);border-radius:12px;padding:8px 16px;cursor:pointer;margin:14px 10px 0 0}
+/* misc sections */
+.g23{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media(max-width:900px){.g23{grid-template-columns:1fr}}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}@media(max-width:900px){.split{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;background:#ffffff0f;border-radius:14px;overflow:hidden;font-size:.95rem}
+td,th{padding:10px 14px;text-align:left;border-bottom:1px solid #ffffff22}
+.dark .src{color:#9fb2c6}
+.lim{margin:0;padding-left:18px;color:#c9d7e5}
+.chart{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:16px;margin:10px 0}
+.hl{list-style:none;padding:0;margin:0 0 6px}.hl li{padding:4px 0}
+.ct{width:100%;background:var(--card);border:1px solid var(--line);color:var(--ink)}.ct td,.ct th{border-bottom:1px solid var(--line)}
+.fm{display:grid;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px}.fm label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--mut)}
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin:10px 0}
+summary{font-weight:700;cursor:pointer}details p{margin:10px 0 0;color:var(--mut)}
+footer{background:var(--navy);color:#b9c8d8;padding:40px 0;font-size:.9rem}footer .brand{color:#fff;margin-bottom:12px}
 </style>
 </head>
-<body>
-<div class="w">
-<div class="bar0"><img src="logo.png" alt="PasÒptim"><div class="lang" role="group" aria-label="Idioma / Language"><button>CA</button><button>ES</button><button>EN</button></div></div>
-<h1 data-t="h1"></h1>
-<p class="lead" data-t="lead"></p>
+<body id="top">
+<header class="nav"><div class="w nv">
+ <a class="brand" href="#top"><img src="logo.png" alt=""><span>Pas<b>Òptim</b></span></a>
+ <nav id="menu">
+  <a href="#com" data-t="n_how"></a><a href="#vistes" data-t="n_views"></a><a href="#analitza" data-t="n_tool"></a><a href="#funcions" data-t="n_feat"></a><a href="#calcat" data-t="n_shoe"></a><a href="#ciencia" data-t="n_sci"></a><a href="#pilot" data-t="n_join"></a>
+ </nav>
+ <div class="nr"><div class="lang" role="group" aria-label="Idioma / Language"><button>CA</button><button>ES</button><button>EN</button></div>
+ <button id="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span></button></div>
+</div></header>
 
-<div class="form">
- <label><span data-t="f_act"></span><select id="act"><option value="0" data-t="o_walk"></option><option value="1" data-t="o_run"></option><option value="2" data-t="o_both"></option></select></label>
- <label><span data-t="f_age"></span><input type="number" id="age" min="8" max="99" data-ph="ph_age"></label>
- <label><span data-t="f_sex"></span><select id="sex"><option value="" data-t="o_none"></option><option value="f" data-t="o_f"></option><option value="m" data-t="o_m"></option></select></label>
- <label><span data-t="f_h"></span><input type="number" id="h" min="100" max="230"></label>
- <label><span data-t="f_wt"></span><input type="number" id="wt" min="20" max="250"></label>
- <div></div>
- <div class="full"><span style="font-size:.9rem;color:var(--mut)" data-t="f_pain"></span>
-  <div class="checks" id="mols"></div></div>
- <div class="full checks">
-  <label><input type="checkbox" id="prev"><span data-t="c_prev"></span></label>
-  <label><input type="checkbox" id="long"><span data-t="c_long"></span></label>
+<section class="hero"><div class="w hg">
+ <div>
+  <span class="pill" data-t="hero_pill"></span>
+  <h1 data-t="h1"></h1>
+  <p class="lead" data-t="lead"></p>
+  <div class="cta"><a class="btn" href="#analitza" data-t="cta"></a><a class="btn ghost" href="#vistes" data-t="cta2"></a></div>
+  <ul class="trust"><li data-t="tr1"></li><li data-t="tr2"></li><li data-t="tr3"></li><li data-t="tr4"></li></ul>
  </div>
-</div>
+ <div class="hv" aria-hidden="true">
+  <svg viewBox="0 0 200 300"><g stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none">
+   <circle cx="100" cy="42" r="15" fill="#fff" stroke="none"/><path d="M100 62V150"/>
+   <g class="ar"><path d="M100 76V128"/><circle cx="100" cy="128" r="5" fill="#0fb5a6" stroke="none"/></g>
+   <g class="ar b"><path d="M100 76V128" opacity=".55"/></g>
+   <g class="th"><path d="M100 150V215"/><circle cx="100" cy="215" r="6" fill="#0fb5a6" stroke="none"/><g class="sh"><path d="M100 215V278"/><path d="M100 278L122 280" stroke-width="6"/><circle cx="100" cy="278" r="6" fill="#0fb5a6" stroke="none"/></g></g>
+   <g class="th b"><path d="M100 150V215" opacity=".55"/><g class="sh b"><path d="M100 215V278" opacity=".55"/><path d="M100 278L122 280" stroke-width="6" opacity=".55"/></g></g>
+   <circle cx="100" cy="150" r="7" fill="#0fb5a6" stroke="none"/>
+  </g></svg>
+  <span class="fc c1" data-t="fc1"></span><span class="fc c2" data-t="fc2"></span><span class="fc c3" data-t="fc3"></span>
+ </div>
+</div></section>
 
-<div class="stage" id="stage"></div>
-<p class="tips" data-t="tips"></p>
-<div class="consent">
- <label><input type="checkbox" id="ok1"><span data-t="ok1"></span></label>
- <label id="tut" style="display:none"><input type="checkbox" id="ok2"><span data-t="ok2"></span></label>
-</div>
-<button id="go" disabled data-t="go"></button>
-<div class="bar" id="bar"><i id="pg"></i></div>
-<div id="st"></div>
+<section class="sec alt" id="com"><div class="w">
+ <h2 data-t="how_t"></h2><p class="sub" data-t="how_s"></p>
+ <div class="grid3">
+  <article class="card rv"><span class="num">1</span><h3 data-t="st1_t"></h3><p data-t="st1_p"></p></article>
+  <article class="card rv"><span class="num">2</span><h3 data-t="st2_t"></h3><p data-t="st2_p"></p></article>
+  <article class="card rv"><span class="num">3</span><h3 data-t="st3_t"></h3><p data-t="st3_p"></p></article>
+ </div>
+</div></section>
 
-<section id="res">
- <h2 data-t="r_title"></h2>
- <div class="top"><div class="ring" id="ring"><span id="sc"></span></div>
-  <div style="flex:1;min-width:240px"><b id="verd"></b><p id="sumy" style="margin:4px 0;color:var(--mut)"></p><div class="chips" id="okc"></div></div></div>
- <h2 data-t="r_card"></h2><div class="fich" id="fich"></div>
- <h2 data-t="r_err"></h2><div id="fl"></div><div id="ref"></div>
- <h2 data-t="r_shoe"></h2><div class="shoe" id="shoe"></div>
- <div class="note" data-h="note"></div>
- <button class="ghost" id="wipe" data-t="wipe"></button>
-</section>
+<section class="sec" id="vistes"><div class="w">
+ <h2 data-t="vw_t"></h2><p class="sub" data-t="vw_s"></p>
+ <div class="demo">
+  <div>
+   <div class="tabs" id="vtabs"><button data-v="side" data-t="vt_side"></button><button data-v="front" data-t="vt_front"></button><button data-v="back" data-t="vt_back"></button></div>
+   <div class="fig" id="fig" role="img"></div>
+   <p class="src" data-t="ex_note"></p>
+  </div>
+  <div>
+   <div class="tabs" id="exs"><button data-e="a" data-t="ex_a"></button><button data-e="b" data-t="ex_b"></button><button data-e="c" data-t="ex_c"></button></div>
+   <p class="sub" id="vdesc" style="margin-bottom:6px"></p>
+   <div id="dg"></div><p class="src" data-t="g_hint"></p>
+  </div>
+ </div>
+ <h3 style="margin-top:34px;font-size:1.4rem" data-t="ex_res"></h3><div id="dfind"></div>
+</div></section>
 
-<h2 data-t="why"></h2>
-<table>
- <tr><td data-t="tb1"></td><td><b data-t="n1"></b></td><td class="src">Roy et al., 2022</td></tr>
- <tr><td data-t="tb2"></td><td><b data-t="n2"></b></td><td class="src">Stenerson et al., 2023</td></tr>
- <tr><td data-t="tb3"></td><td><b data-t="n3"></b></td><td class="src">Generalitat de Catalunya, DMAF 2025</td></tr>
-</table>
-<p class="src" data-t="why_p"></p>
-<footer data-t="foot"></footer>
-</div>
+<section class="sec alt" id="analitza"><div class="w">
+ <h2 data-t="tool_t"></h2><p class="sub" data-t="tool_s"></p>
+ <div class="form">
+  <label><span data-t="f_act"></span><select id="act"><option value="0" data-t="o_walk"></option><option value="1" data-t="o_run"></option><option value="2" data-t="o_both"></option></select></label>
+  <label><span data-t="f_age"></span><input type="number" id="age" min="8" max="99" data-ph="ph_age"></label>
+  <label><span data-t="f_sex"></span><select id="sex"><option value="" data-t="o_none"></option><option value="f" data-t="o_f"></option><option value="m" data-t="o_m"></option></select></label>
+  <label><span data-t="f_h"></span><input type="number" id="h" min="100" max="230"></label>
+  <label><span data-t="f_wt"></span><input type="number" id="wt" min="20" max="250"></label>
+  <div></div>
+  <div class="full"><span style="font-size:.9rem;color:var(--mut)" data-t="f_pain"></span><div class="checks" id="mols"></div></div>
+  <div class="full checks"><label><input type="checkbox" id="prev"><span data-t="c_prev"></span></label><label><input type="checkbox" id="long"><span data-t="c_long"></span></label></div>
+ </div>
+ <div class="stage" id="stage"></div>
+ <p class="tips" data-t="tips"></p>
+ <div class="consent"><label><input type="checkbox" id="ok1"><span data-t="ok1"></span></label><label id="tut" style="display:none"><input type="checkbox" id="ok2"><span data-t="ok2"></span></label></div>
+ <button class="btn" id="go" disabled data-t="go"></button>
+ <div class="bar" id="bar"><i id="pg"></i></div><div id="st"></div>
+
+ <div id="res">
+  <h3 class="rt" data-t="r_title"></h3>
+  <div class="top"><div class="ring" id="ring"><span id="sc"></span></div><div style="flex:1;min-width:240px"><b id="verd" style="font-size:1.3rem"></b><p id="sumy" style="margin:4px 0;color:var(--mut)"></p><div class="chips" id="okc"></div></div></div>
+  <h3 class="rt" data-t="r_card"></h3><div class="fich" id="fich"></div>
+  <h3 class="rt" data-t="r_gauges"></h3><div class="gl" id="gauges"></div><p class="src" data-t="g_hint"></p>
+  <h3 class="rt" data-t="r_err"></h3><div id="fl"></div><div id="ref"></div>
+  <h3 class="rt" data-t="r_shoe"></h3><div class="shoe" id="shoe"></div>
+  <div class="note" data-h="note"></div>
+  <button class="btn" id="save" data-t="save"></button> <button class="ghost2" id="wipe" data-t="wipe"></button>
+ </div>
+</div></section>
+
+<section class="sec" id="funcions"><div class="w">
+ <h2 data-t="ft_t"></h2><p class="sub" data-t="ft_s"></p>
+ <div class="grid3">
+  <article class="card rv"><h3 data-t="f1_t"></h3><p data-t="f1_p"></p></article><article class="card rv"><h3 data-t="f2_t"></h3><p data-t="f2_p"></p></article><article class="card rv"><h3 data-t="f3_t"></h3><p data-t="f3_p"></p></article>
+  <article class="card rv"><h3 data-t="f4_t"></h3><p data-t="f4_p"></p></article><article class="card rv"><h3 data-t="f5_t"></h3><p data-t="f5_p"></p></article><article class="card rv"><h3 data-t="f6_t"></h3><p data-t="f6_p"></p></article>
+ </div>
+ <h2 style="margin-top:64px;font-size:1.8rem" data-t="d_t"></h2>
+ <div class="grid3" style="margin-top:16px">
+  <article class="card rv"><span class="num">★</span><h3 data-t="d1_t"></h3><p data-t="d1_p"></p></article><article class="card rv"><span class="num">+</span><h3 data-t="d2_t"></h3><p data-t="d2_p"></p></article><article class="card rv"><span class="num">🔒</span><h3 data-t="d3_t"></h3><p data-t="d3_p"></p></article>
+ </div>
+</div></section>
+
+<section class="sec alt" id="calcat"><div class="w split">
+ <div><h2 data-t="sh_t"></h2><p class="sub" data-t="sh_s"></p><p class="src" data-t="sh_ex"></p></div>
+ <div class="shoe" id="shoe-demo"></div>
+</div></section>
+
+<section class="sec" id="progres"><div class="w">
+ <h2 data-t="pg_t"></h2><p class="sub" data-t="pg_s"></p>
+ <div id="hist"></div>
+</div></section>
+
+<section class="sec dark" id="ciencia"><div class="w">
+ <h2 data-t="sc_t"></h2><p class="sub" data-t="sc_s"></p>
+ <div class="grid3">
+  <article class="card rv"><h3 data-t="sc1_t"></h3><p data-t="sc1_p"></p></article><article class="card rv"><h3 data-t="sc2_t"></h3><p data-t="sc2_p"></p></article><article class="card rv"><h3 data-t="sc3_t"></h3><p data-t="sc3_p"></p></article>
+ </div>
+ <div class="split" style="margin-top:40px">
+  <div><h3 data-t="why"></h3>
+   <table><tr><td data-t="tb1"></td><td><b data-t="n1"></b></td><td class="src">Roy et al., 2022</td></tr>
+   <tr><td data-t="tb2"></td><td><b data-t="n2"></b></td><td class="src">Stenerson et al., 2023</td></tr>
+   <tr><td data-t="tb3"></td><td><b data-t="n3"></b></td><td class="src">Generalitat de Catalunya, DMAF 2025</td></tr></table>
+   <p class="src" data-t="why_p"></p></div>
+  <div><h3 data-t="lim_t"></h3><ul class="lim"><li data-t="lim1"></li><li data-t="lim2"></li><li data-t="lim3"></li></ul></div>
+ </div>
+</div></section>
+
+<section class="sec" id="pilot"><div class="w split">
+ <div><h2 data-t="j_t"></h2><p class="sub" data-t="j_s"></p>
+  <div class="card" style="margin-bottom:12px"><h3 data-t="jc1_t"></h3><p data-t="jc1_p"></p></div>
+  <div class="card" style="margin-bottom:12px"><h3 data-t="jc2_t"></h3><p data-t="jc2_p"></p></div>
+  <div class="card"><h3 data-t="jc3_t"></h3><p data-t="jc3_p"></p></div></div>
+ <form class="fm" id="cf">
+  <label><span data-t="fm_name"></span><input name="name" required></label>
+  <label><span data-t="fm_mail"></span><input name="mail" type="email" required></label>
+  <label><span data-t="fm_role"></span><select name="role"><option data-t="r1"></option><option data-t="r2"></option><option data-t="r3"></option><option data-t="r4"></option></select></label>
+  <label><span data-t="fm_msg"></span><textarea name="msg" rows="4"></textarea></label>
+  <button class="btn" type="submit" data-t="fm_send"></button><div id="cfm" class="src"></div>
+ </form>
+</div></section>
+
+<section class="sec alt"><div class="w">
+ <h2 data-t="faq_t"></h2><div style="max-width:800px;margin-top:20px">
+  <details><summary data-t="q1"></summary><p data-t="a1"></p></details><details><summary data-t="q2"></summary><p data-t="a2"></p></details><details><summary data-t="q3"></summary><p data-t="a3"></p></details><details><summary data-t="q4"></summary><p data-t="a4"></p></details><details><summary data-t="q5"></summary><p data-t="a5"></p></details>
+ </div>
+</div></section>
+
+<footer><div class="w"><div class="brand"><img src="logo.png" alt="" style="background:#fff;border-radius:10px;padding:3px"><span>Pas<b>Òptim</b></span></div><p data-t="foot"></p></div></footer>
 
 <script type="module">
-const $=s=>document.querySelector(s);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let LI=0,sk="",last=null,M=null,ts=0;
 /* ---------- textos: [català, castellà, anglès] ---------- */
 const D={
 title:["PasÒptim · El teu caminar, el teu calçat","PasÒptim · Tu forma de caminar, tu calzado","PasÒptim · Your gait, your footwear"],
-h1:["Mirat com camines.","Mirate como caminas.","See how you walk."],
+h1:["Mira com camines.","Mira cómo caminas.","See how you walk."],
 lead:["Respon unes preguntes, puja un vídeo de front i un de perfil (i, si vols, un de darrere), i PasÒptim detecta el teu esquelet, mesura la teva marxa i t'orienta sobre què treballar i quin tipus de calçat et pot anar bé. És una eina de prevenció i benestar, no de diagnòstic.","Responde unas preguntas, sube un vídeo de frente y uno de perfil (y, si quieres, uno de espaldas), y PasÒptim detecta tu esqueleto, mide tu marcha y te orienta sobre qué trabajar y qué tipo de calzado te puede ir bien. Es una herramienta de prevención y bienestar, no de diagnóstico.","Answer a few questions, upload a front video and a side video (and, optionally, a rear one), and PasÒptim tracks your skeleton, measures your gait and guides you on what to work on and what type of footwear may suit you. It is a prevention and wellbeing tool, not a diagnostic one."],
 f_act:["Activitat","Actividad","Activity"],o_walk:["Caminar","Caminar","Walking"],o_run:["Córrer","Correr","Running"],o_both:["Les dues coses","Las dos cosas","Both"],
 f_age:["Edat","Edad","Age"],ph_age:["Anys","Años","Years"],
@@ -256,30 +428,77 @@ const Z={genoll:["valgus","rom","over"],maluc:["pelvis","sway","wide"],canyella:
 const FM={deg:v=>v.toFixed(1)+"°",leg:v=>pc(v)+" "+t("u_leg"),tr:v=>pc(v)+" "+t("u_tr"),hw:v=>v.toFixed(2)+"× "+t("u_hw"),rom:v=>v.toFixed(0)+"° "+t("u_rom"),cad:v=>v.toFixed(0)+" "+t("spm")};
 const pc=v=>(v*100).toFixed(0)+"%";
 
-/* ---------- idioma ---------- */
-let LI=0,sk="",last=null,M=null,ts=0;
-try{LI=+localStorage.getItem("pl")||0}catch(e){}
-const t=k=>D[k][LI];
-const st=k=>{sk=k;$("#st").textContent=k?t(k):""};
-const have={};
-$("#stage").innerHTML=["front","side","back"].map(k=>`<div class="slot"><b data-t="v_${k}"></b><small data-t="s_${k}"></small><br><label class="pick"><span data-t="pick"></span><input type="file" id="f_${k}" accept="video/*"></label><div class="vw" id="w_${k}"><video id="v_${k}" muted playsinline controls></video><canvas id="c_${k}"></canvas></div></div>`).join("");
-$("#mols").innerHTML=Object.keys(Z).map(z=>`<label><input type="checkbox" class="mol" value="${z}"><span data-t="m_${z}"></span></label>`).join("");
-function apply(){
- document.documentElement.lang=["ca","es","en"][LI];document.title=t("title");
- document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
- document.querySelectorAll("[data-h]").forEach(e=>e.innerHTML=t(e.dataset.h));
- document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
- document.querySelectorAll(".lang button").forEach((b,i)=>b.setAttribute("aria-pressed",i==LI));
- st(sk);if(last)show(last.r,last.P)}
-document.querySelectorAll(".lang button").forEach((b,i)=>b.onclick=()=>{LI=i;try{localStorage.setItem("pl",i)}catch(e){}apply()});
 
-/* ---------- formulari i vídeos ---------- */
-const chk=()=>{const a=+$("#age").value;$("#tut").style.display=a>0&&a<18?"flex":"none";$("#go").disabled=!(have.front&&have.side&&$("#ok1").checked&&a>=8&&(a>=18||$("#ok2").checked))};
-for(const k of ["front","side","back"]){$("#f_"+k).onchange=e=>{const f=e.target.files[0];if(!f)return;$("#v_"+k).src=URL.createObjectURL(f);$("#w_"+k).classList.add("on");have[k]=1;chk()}}
-["#age","#ok1","#ok2"].forEach(x=>$(x).oninput=chk);
+Object.assign(D,{
+hero_pill:["Anàlisi de la marxa amb IA","Análisis de la marcha con IA","AI gait analysis"],
+h1:["El teu caminar, el teu calçat.","Tu forma de caminar, tu calzado.","Your gait, your footwear."],
+lead:["Puja un vídeo de front i un de perfil, i PasÒptim mesura la teva marxa, detecta què pots millorar, t'ensenya exercicis i t'orienta sobre el calçat. Directe al navegador, sense instal·lar res.","Sube un vídeo de frente y uno de perfil, y PasÒptim mide tu marcha, detecta qué puedes mejorar, te enseña ejercicios y te orienta sobre el calzado. Directo en el navegador, sin instalar nada.","Upload a front and a side video and PasÒptim measures your gait, spots what you can improve, teaches you exercises and guides you on footwear. Right in your browser, nothing to install."],
+cta:["Analitza ara","Analiza ahora","Analyse now"],cta2:["Veure un exemple","Ver un ejemplo","See an example"],
+tr1:["Directe al navegador","Directo en el navegador","Right in your browser"],tr2:["Sense instal·lar res","Sin instalar nada","Nothing to install"],tr3:["Català · Castellano · English","Català · Castellano · English","Català · Castellano · English"],tr4:["Orientació, no diagnòstic","Orientación, no diagnóstico","Guidance, not diagnosis"],
+fc1:["Tronc 6°","Tronco 6°","Trunk 6°"],fc2:["Cadència 112","Cadencia 112","Cadence 112"],fc3:["Genoll 52°","Rodilla 52°","Knee 52°"],
+n_how:["Com funciona","Cómo funciona","How it works"],n_views:["Vistes","Vistas","Views"],n_tool:["Analitza","Analiza","Analyse"],n_feat:["Funcions","Funciones","Features"],n_shoe:["Calçat","Calzado","Footwear"],n_sci:["Ciència","Ciencia","Science"],n_join:["Col·labora","Colabora","Collaborate"],
+how_t:["Com funciona","Cómo funciona","How it works"],how_s:["En tres passos i en pocs minuts, des de qualsevol mòbil, tauleta o ordinador.","En tres pasos y en pocos minutos, desde cualquier móvil, tableta u ordenador.","Three steps, a few minutes, from any phone, tablet or computer."],
+st1_t:["Prepara la fitxa","Prepara tu ficha","Fill in your profile"],st1_p:["Indica activitat, edat, alçada, pes i molèsties. Amb això adaptem exercicis i calçat.","Indica actividad, edad, altura, peso y molestias. Con esto adaptamos ejercicios y calzado.","Enter your activity, age, height, weight and any pain. We use it to tailor exercises and footwear."],
+st2_t:["Grava't caminant","Grábate caminando","Record yourself walking"],st2_p:["Un vídeo de front i un de perfil de 5–10 s. El de darrere és opcional. A casa o al carrer.","Un vídeo de frente y uno de perfil de 5–10 s. El de espaldas es opcional. En casa o en la calle.","A 5–10 s front video and side video. The rear one is optional. At home or outdoors."],
+st3_t:["Descobreix els resultats","Descubre los resultados","See your results"],st3_p:["Mesures amb rang ideal, errors detectats, exercicis i un perfil de calçat orientatiu.","Medidas con rango ideal, errores detectados, ejercicios y un perfil de calzado orientativo.","Measurements with ideal ranges, detected issues, exercises and a guidance footwear profile."],
+vw_t:["Tres vistes de cada pas","Tres vistas de cada paso","Three views of every step"],vw_s:["Tria una vista i un exemple per veure què mesurem i com s'interpreta.","Elige una vista y un ejemplo para ver qué medimos y cómo se interpreta.","Pick a view and an example to see what we measure and how it is read."],
+vt_side:["Lateral","Lateral","Side"],vt_front:["Frontal","Frontal","Front"],vt_back:["Posterior","Posterior","Rear"],
+vd_side:["Inclinació del tronc, flexió dels genolls, sobrepas, cadència i posició del cap.","Inclinación del tronco, flexión de las rodillas, sobrepaso, cadencia y posición de la cabeza.","Trunk lean, knee flexion, overstriding, cadence and head position."],
+vd_front:["Genoll cap endins, caiguda de la pelvis, espatlles, balanceig i amplada de la base.","Rodilla hacia dentro, caída de la pelvis, hombros, balanceo y anchura de la base.","Knee collapse, pelvic drop, shoulders, sway and base width."],
+vd_back:["Inclinació del taló respecte de la tíbia: pronació o supinació (orientatiu).","Inclinación del talón respecto a la tibia: pronación o supinación (orientativo).","Heel tilt relative to the shin: pronation or supination (indicative)."],
+ex_a:["Marxa eficient","Marcha eficiente","Efficient gait"],ex_b:["Genoll cap endins","Rodilla hacia dentro","Knee collapse"],ex_c:["Sobrepas i rigidesa","Sobrepaso y rigidez","Overstride and stiffness"],
+ex_note:["Il·lustració esquemàtica amb dades d'exemple inventades. No és una persona real.","Ilustración esquemática con datos de ejemplo inventados. No es una persona real.","Schematic illustration with invented example data. Not a real person."],
+ex_res:["Què en diria PasÒptim?","¿Qué diría PasÒptim?","What would PasÒptim say?"],
+tool_t:["Analitza la teva marxa","Analiza tu marcha","Analyse your gait"],tool_s:["Omple la fitxa, puja els vídeos i prem el botó. Tot passa al teu dispositiu.","Rellena la ficha, sube los vídeos y pulsa el botón. Todo ocurre en tu dispositivo.","Fill in your profile, upload your videos and press the button. Everything happens on your device."],
+r_gauges:["Les teves mesures","Tus medidas","Your measurements"],g_hint:["La barra mostra el rang ideal (verd), l'atenció (taronja) i l'alerta (vermell).","La barra muestra el rango ideal (verde), la atención (naranja) y la alerta (rojo).","The bar shows the ideal range (green), caution (orange) and alert (red)."],
+save:["Desa a l'historial d'aquest dispositiu","Guardar en el historial de este dispositivo","Save to this device's history"],saved:["Desat. Mira la secció de progrés.","Guardado. Mira la sección de progreso.","Saved. See the progress section."],
+ft_t:["Tot el que necessites en un sol lloc","Todo lo que necesitas en un solo lugar","Everything you need in one place"],ft_s:["Funcions pensades per entendre la teva marxa i millorar-la amb criteri.","Funciones pensadas para entender tu marcha y mejorarla con criterio.","Features designed to help you understand your gait and improve it sensibly."],
+f1_t:["Escaneig ràpid per vídeo","Escaneo rápido por vídeo","Quick video scan"],f1_p:["Puja un vídeo curt de front, de perfil o de darrere i obtén les mesures al moment.","Sube un vídeo corto de frente, de perfil o de espaldas y obtén las medidas al momento.","Upload a short front, side or rear video and get measurements instantly."],
+f2_t:["Anàlisi detallat","Análisis detallado","Detailed analysis"],f2_p:["Genolls, tronc, pelvis, cadència, longitud de pas, sobrepas i pronació orientativa.","Rodillas, tronco, pelvis, cadencia, longitud de paso, sobrepaso y pronación orientativa.","Knees, trunk, pelvis, cadence, step length, overstride and indicative pronation."],
+f3_t:["Exercicis personalitzats","Ejercicios personalizados","Personalised exercises"],f3_p:["Cada error porta exercicis correctius bàsics adaptats a la teva fitxa.","Cada error trae ejercicios correctivos básicos adaptados a tu ficha.","Each issue comes with basic corrective exercises tailored to your profile."],
+f4_t:["Seguiment del progrés","Seguimiento del progreso","Progress tracking"],f4_p:["Desa els resultats al teu dispositiu i mira com evoluciona la teva puntuació.","Guarda los resultados en tu dispositivo y mira cómo evoluciona tu puntuación.","Save results on your device and watch your score evolve."],
+f5_t:["Entén els números","Entiende los números","Understand the numbers"],f5_p:["Cada mesura s'explica amb el seu rang ideal i les molèsties que s'hi poden associar.","Cada medida se explica con su rango ideal y las molestias que se pueden asociar.","Each measurement comes with its ideal range and the discomfort it may be linked to."],
+f6_t:["Compara dos anàlisis","Compara dos análisis","Compare two analyses"],f6_p:["Posa dos resultats un al costat de l'altre per veure què ha millorat.","Pon dos resultados uno al lado del otro para ver qué ha mejorado.","Put two results side by side to see what has improved."],
+d_t:["El que ens diferencia","Lo que nos diferencia","What sets us apart"],
+d1_t:["Calçat orientatiu","Calzado orientativo","Footwear guidance"],d1_p:["Un perfil de sabatilla amb 8 paràmetres segons la teva marxa i la teva activitat.","Un perfil de zapatilla con 8 parámetros según tu marcha y tu actividad.","A shoe profile with 8 parameters based on your gait and activity."],
+d2_t:["Derivació a un professional","Derivación a un profesional","Referral to a professional"],d2_p:["Si hi ha molèsties o errors marcats, t'aconsellem un fisioterapeuta o un podòleg.","Si hay molestias o errores marcados, te aconsejamos un fisioterapeuta o un podólogo.","If there is pain or marked issues, we advise seeing a physiotherapist or podiatrist."],
+d3_t:["Privacitat per defecte","Privacidad por defecto","Private by default"],d3_p:["Els vídeos no surten del teu dispositiu i els pots esborrar quan vulguis.","Los vídeos no salen de tu dispositivo y puedes borrarlos cuando quieras.","Videos never leave your device and you can delete them anytime."],
+sh_t:["Calçat: 8 paràmetres, cap promesa","Calzado: 8 parámetros, ninguna promesa","Footwear: 8 parameters, no promises"],
+sh_s:["Traduïm la teva marxa en un perfil de sabatilla: amortiment, estabilitat, drop, balancí, flexibilitat, punta, pes i taló. És una orientació, no una garantia.","Traducimos tu marcha en un perfil de zapatilla: amortiguación, estabilidad, drop, balancín, flexibilidad, puntera, peso y talón. Es una orientación, no una garantía.","We translate your gait into a shoe profile: cushioning, stability, drop, rocker, flexibility, toe box, weight and heel. It is guidance, not a guarantee."],
+sh_ex:["Perfil per a l'exemple triat a la secció de vistes.","Perfil para el ejemplo elegido en la sección de vistas.","Profile for the example chosen in the views section."],
+p_cush:["Amortiment","Amortiguación","Cushioning"],p_stab:["Estabilitat","Estabilidad","Stability"],p_drop:["Drop","Drop","Drop"],p_rock:["Balancí","Balancín","Rocker"],p_flex:["Flexibilitat","Flexibilidad","Flexibility"],p_toe:["Punta ampla","Puntera ancha","Roomy toe box"],p_wei:["Lleugeresa","Ligereza","Lightness"],p_heel:["Taló ferm","Talón firme","Firm heel"],
+lv1:["Baix","Bajo","Low"],lv2:["Mitjà","Medio","Medium"],lv3:["Alt","Alto","High"],
+pg_t:["El teu progrés","Tu progreso","Your progress"],pg_s:["Les anàlisis desades viuen només en aquest dispositiu.","Los análisis guardados viven solo en este dispositivo.","Saved analyses live only on this device."],
+pg_empty:["Encara no tens anàlisis desades. Fes una anàlisi i prem «Desa a l'historial».","Aún no tienes análisis guardados. Haz un análisis y pulsa «Guardar en el historial».","You have no saved analyses yet. Run an analysis and press “Save to history”."],
+pg_pick:["Marca'n dues per comparar-les.","Marca dos para compararlos.","Tick two to compare them."],pg_del:["Esborra l'historial","Borrar el historial","Delete history"],
+th_m:["Mesura","Medida","Measure"],th_ch:["Canvi","Cambio","Change"],
+sc_t:["Ciència i límits","Ciencia y límites","Science and limits"],sc_s:["Ens basem en estudis publicats i et diem amb claredat què no podem fer.","Nos basamos en estudios publicados y te decimos con claridad qué no podemos hacer.","We rely on published studies and tell you clearly what we cannot do."],
+sc1_t:["Visió artificial","Visión artificial","Computer vision"],sc1_p:["Un model de detecció de postura (MediaPipe) localitza les articulacions al vídeo i en calculem angles i distàncies.","Un modelo de detección de postura (MediaPipe) localiza las articulaciones en el vídeo y calculamos ángulos y distancias.","A pose-detection model (MediaPipe) locates your joints in the video and we compute angles and distances."],
+sc2_t:["Biomecànica orientativa","Biomecánica orientativa","Indicative biomechanics"],sc2_p:["Comparem cada mesura amb rangs habituals de la literatura. Els llindars són orientatius i encara s'han de validar.","Comparamos cada medida con rangos habituales de la literatura. Los umbrales son orientativos y aún deben validarse.","We compare each measurement with typical ranges from the literature. Thresholds are indicative and still need validation."],
+sc3_t:["Exercicis correctius","Ejercicios correctivos","Corrective exercises"],sc3_p:["Proposem exercicis bàsics de força, mobilitat i control motor associats a cada error.","Proponemos ejercicios básicos de fuerza, movilidad y control motor asociados a cada error.","We suggest basic strength, mobility and motor-control exercises linked to each issue."],
+lim_t:["Què no fem","Qué no hacemos","What we do not do"],
+lim1:["No diagnostiquem lesions ni substituïm un professional de la salut.","No diagnosticamos lesiones ni sustituimos a un profesional de la salud.","We do not diagnose injuries or replace a health professional."],
+lim2:["No prometem que un calçat concret eviti una lesió: l'evidència és limitada (Cochrane, 2022).","No prometemos que un calzado concreto evite una lesión: la evidencia es limitada (Cochrane, 2022).","We do not promise a specific shoe prevents injury: evidence is limited (Cochrane, 2022)."],
+lim3:["Un vídeo 2D amb una sola càmera té marge d'error; la pronació és només orientativa.","Un vídeo 2D con una sola cámara tiene margen de error; la pronación es solo orientativa.","A 2D single-camera video has a margin of error; pronation is only indicative."],
+j_t:["Col·labora amb PasÒptim","Colabora con PasÒptim","Collaborate with PasÒptim"],
+j_s:["Preparem una prova pilot amb voluntaris i professionals. Si ets botiga, fisioterapeuta, podòleg, club o gimnàs, t'agradaria sentir-te.","Preparamos una prueba piloto con voluntarios y profesionales. Si eres tienda, fisioterapeuta, podólogo, club o gimnasio, nos encantará saber de ti.","We are preparing a pilot with volunteers and professionals. If you are a shop, physiotherapist, podiatrist, club or gym, we would love to hear from you."],
+jc1_t:["Botigues d'esport","Tiendas de deporte","Sports shops"],jc1_p:["Ofereix als clients una orientació de calçat basada en la seva marxa.","Ofrece a tus clientes una orientación de calzado basada en su marcha.","Offer customers footwear guidance based on their gait."],
+jc2_t:["Fisioterapeutes i podòlegs","Fisioterapeutas y podólogos","Physiotherapists and podiatrists"],jc2_p:["Una primera valoració visual que facilita la conversa a la consulta.","Una primera valoración visual que facilita la conversación en consulta.","A first visual screen that makes the conversation in clinic easier."],
+jc3_t:["Clubs i gimnasos","Clubes y gimnasios","Clubs and gyms"],jc3_p:["Detecta compensacions dels teus socis i proposa exercicis de prevenció.","Detecta compensaciones de tus socios y propón ejercicios de prevención.","Spot your members' compensations and suggest prevention exercises."],
+fm_name:["Nom","Nombre","Name"],fm_mail:["Correu electrònic","Correo electrónico","Email"],fm_role:["Qui ets?","¿Quién eres?","Who are you?"],
+r1:["Botiga d'esport","Tienda de deporte","Sports shop"],r2:["Fisioterapeuta o podòleg","Fisioterapeuta o podólogo","Physiotherapist or podiatrist"],r3:["Club o gimnàs","Club o gimnasio","Club or gym"],r4:["Voluntari per al pilot","Voluntario para el piloto","Pilot volunteer"],
+fm_msg:["Missatge","Mensaje","Message"],fm_send:["Enviar","Enviar","Send"],
+fm_nomail:["Aquest formulari encara no té un correu de destinació configurat.","Este formulario aún no tiene un correo de destino configurado.","This form does not have a destination email configured yet."],
+faq_t:["Preguntes freqüents","Preguntas frecuentes","Frequently asked questions"],
+q1:["És un diagnòstic mèdic?","¿Es un diagnóstico médico?","Is it a medical diagnosis?"],a1:["No. És una eina de prevenció i benestar. Si tens dolor persistent, consulta un fisioterapeuta, un podòleg o un metge.","No. Es una herramienta de prevención y bienestar. Si tienes dolor persistente, consulta a un fisioterapeuta, un podólogo o un médico.","No. It is a prevention and wellbeing tool. If you have persistent pain, see a physiotherapist, podiatrist or doctor."],
+q2:["On van els meus vídeos?","¿Adónde van mis vídeos?","Where do my videos go?"],a2:["A cap lloc: s'analitzen al teu navegador i no es pugen ni es desen. Pots esborrar-los amb el botó de l'informe.","A ningún sitio: se analizan en tu navegador y no se suben ni se guardan. Puedes borrarlos con el botón del informe.","Nowhere: they are analysed in your browser and are never uploaded or stored. You can delete them with the button in the report."],
+q3:["Com he de gravar el vídeo?","¿Cómo debo grabar el vídeo?","How should I record the video?"],a3:["Cos sencer visible, càmera fixa a l'alçada del maluc, 5–10 s a ritme normal, roba ajustada i bona llum.","Cuerpo entero visible, cámara fija a la altura de la cadera, 5–10 s a ritmo normal, ropa ajustada y buena luz.","Whole body visible, camera fixed at hip height, 5–10 s at normal pace, fitted clothing and good light."],
+q4:["Serveix per a córrer?","¿Sirve para correr?","Does it work for running?"],a4:["Els vídeos actuals estan pensats per a la marxa. Per a córrer, el calçat s'orienta cap a més amortiment, però convé una anàlisi específica.","Los vídeos actuales están pensados para la marcha. Para correr, el calzado se orienta hacia más amortiguación, pero conviene un análisis específico.","The current videos are designed for walking. For running the footwear leans towards more cushioning, but a dedicated analysis is advisable."],
+q5:["Puc fer-ho si sóc menor?","¿Puedo hacerlo si soy menor?","Can I use it if I am a minor?"],a5:["Sí, amb l'autorització d'un pare, mare o tutor (cal marcar-ho abans d'analitzar).","Sí, con la autorización de un padre, madre o tutor (hay que marcarlo antes de analizar).","Yes, with permission from a parent or guardian (tick it before analysing)."]
+});
 
 async function load(){
- M=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs");
+ M={...(await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"))};
  const fs=await M.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
  const o=d=>({baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate:d},runningMode:"VIDEO",numPoses:1});
  try{M.lmk=await M.PoseLandmarker.createFromOptions(fs,o("GPU"))}catch(e){M.lmk=await M.PoseLandmarker.createFromOptions(fs,o("CPU"))}}
@@ -334,20 +553,100 @@ function back({fr,W,H}){const e=[[],[]];
    e[j].push((Math.atan2(C.x-A.x,C.y-A.y)-Math.atan2(A.x-K_.x,A.y-K_.y))*57.3*o)})}
  return avg([q(e[0],.5),q(e[1],.5)])}
 
+
+/* ---------- idioma ---------- */
+try{LI=+localStorage.getItem("pl")||0}catch(e){}
+const t=k=>D[k][LI];
+const st=k=>{sk=k;$("#st").textContent=k?t(k):""};
+const have={};
+$("#stage").innerHTML=["front","side","back"].map(k=>`<div class="slot"><b data-t="v_${k}"></b><small data-t="s_${k}"></small><br><label class="pick"><span data-t="pick"></span><input type="file" id="f_${k}" accept="video/*"></label><div class="vw" id="w_${k}"><video id="v_${k}" muted playsinline controls></video><canvas id="c_${k}"></canvas></div></div>`).join("");
+$("#mols").innerHTML=Object.keys(Z).map(z=>`<label><input type="checkbox" class="mol" value="${z}"><span data-t="m_${z}"></span></label>`).join("");
+const li=a=>"<ul>"+a.map(s=>"<li>"+s+"</li>").join("")+"</ul>";
+
+/* ---------- avaluació ---------- */
+function evalV(V){const bad=[],oks=[];
+ for(const [k,e] of Object.entries(K)){const v=V[k];if(!isFinite(v))continue;
+  const sev=e.d*v>=e.d*e.b?2:e.d*v>=e.d*e.a?1:0;(sev?bad:oks).push({k,e,v,sev})}
+ return {bad:bad.sort((x,y)=>y.sev-x.sev),oks}}
 function analyze(F,S,B){
  const m=q(F.wd,.5);
  const V={valgus:q(F.vl,.85),pelvis:q(F.pel,.9),shoulder:q(F.sh,.9),sway:q(F.sw,.95)-q(F.sw,.05),wide:m,narrow:m,
   fwd:avg(S.ln),bwd:-avg(S.ln),head:q(S.hd,.5),rom:(q(S.k[0],.95)-q(S.k[0],.05)+q(S.k[1],.95)-q(S.k[1],.05))/2,over:S.ov,cad:S.cad,pron:B,supin:-B};
- const out=[],oks=[];
- for(const [k,e] of Object.entries(K)){const v=V[k];if(!isFinite(v))continue;
-  const sev=e.d*v>=e.d*e.b?2:e.d*v>=e.d*e.a?1:0;(sev?out:oks).push({k,e,v,sev})}
- return {bad:out.sort((x,y)=>y.sev-x.sev),oks,m:{step:S.stp,cad:S.cad}}}
+ return {...evalV(V),V,m:{step:S.stp,cad:S.cad}}}
 
-/* ---------- informe ---------- */
-const li=a=>"<ul>"+a.map(s=>"<li>"+s+"</li>").join("")+"</ul>";
-function show({bad,oks,m},P){
+/* ---------- peces visuals ---------- */
+function gauge(k,v){const e=K[k],hi=e.d==1,mx=hi?e.b*1.7:e.a*2.2,pct=Math.max(0,Math.min(100,v/mx*100));
+ const z=hi?[[e.a,"ok"],[e.b-e.a,"mid"],[mx-e.b,"bad"]]:[[e.b,"bad"],[e.a-e.b,"mid"],[mx-e.a,"ok"]];
+ const sev=hi?(v>=e.b?2:v>=e.a?1:0):(v<=e.b?2:v<=e.a?1:0);
+ return `<div class="gg"><div class="gh"><span>${e.t[LI]}</span><b class="s${sev}">${FM[e.f](v)}</b></div><div class="gw"><div class="gz">${z.map(([w,c])=>`<i style="width:${w/mx*100}%;background:var(--${c})"></i>`).join("")}</div><span class="gm" style="left:${pct}%"></span></div></div>`}
+
+function findHTML(bad,P){
  const hit=k=>P.mol.filter(z=>Z[z].includes(k)).map(z=>t("m_"+z));
  const sf=x=>x.replace("{s}",P.h?` (≈${Math.round(P.h*.25)} cm)`:"");
+ return bad.map(({k,e,v,sev})=>{const ex=[...e.ex[LI]];if(P.sex=="f"&&(k=="valgus"||k=="pelvis"))ex.push(t("ex_f"));
+  return `<article class="f s${sev}"><h3>${e.t[LI]}${hit(k).length?`<span class="hit">${t("hit")}: ${hit(k).join(", ")}</span>`:""}</h3><div class="v">${t("sev"+sev)} · ${t("val")}: ${FM[e.f](v)}</div>
+  <div class="cols"><div><h4>${t("col_now")}</h4>${li(e.now[LI])}</div><div><h4>${t("col_fut")}</h4>${li(e.fut[LI])}</div></div>
+  <h4>${t("col_ex")}</h4>${li(ex.map(sf))}</article>`}).join("")||`<p>${t("r_none")}</p>`}
+
+const PL=["cush","stab","drop","rock","flex","toe","wei","heel"];
+function shoeHTML(bad,P){
+ const nS=bad.filter(b=>b.e.tag=="S").length,nC=bad.filter(b=>b.e.tag=="C").length,s=nS&&nC?"SC":nS?"S":nC?"C":"N";
+ const p={cush:50,stab:45,drop:50,rock:40,flex:55,toe:50,wei:55,heel:50},up=(k,v)=>p[k]=Math.min(95,v);
+ if(nS){up("stab",85);up("heel",85);up("flex",40);up("toe",70)}
+ if(nC){up("cush",80);up("rock",80);up("drop",70);up("flex",45)}
+ if(P.ai>0)up("cush",p.cush+10);if(P.wt>=85){up("cush",p.cush+10);p.wei=40}if(P.ai==0){up("flex",p.flex+15);up("wei",p.wei+15)}
+ const X=[];if(P.ai>0)X.push(t("sh_run"));if(P.ai==0)X.push(t("sh_walk"));if(P.wt>=85)X.push(t("sh_wt"));
+ return `<h3>${t("sh_"+s+"_t")}</h3><p>${t("sh_"+s+"_p")}</p><div class="sp">${PL.map(k=>`<div><span>${t("p_"+k)}</span><i><b style="width:${p[k]}%"></b></i><em>${t(p[k]<40?"lv1":p[k]<70?"lv2":"lv3")}</em></div>`).join("")}</div>${li([...X,t("sh_g1"),t("sh_g2"),t("sh_g3"),t(nS>1?"sh_g4a":"sh_g4b")])}`}
+
+/* figura esquemàtica segons la vista */
+function figure(vw,V){const R=Math.PI/180,f=n=>n.toFixed(1),
+ ln=(a,b,c="#0e2340",w=8)=>`<path d="M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" fill="none"/>`,
+ dot=p=>`<circle cx="${f(p[0])}" cy="${f(p[1])}" r="6.5" fill="#0fb5a6" stroke="#fff" stroke-width="2.5"/>`;let s="",pts=[];
+ if(vw=="side"){const th=V.fwd*R,hip=[110,170],sh=[hip[0]+95*Math.sin(th),hip[1]-95*Math.cos(th)],hd=[sh[0]+30*Math.sin(th)+V.head*40,sh[1]-30*Math.cos(th)];
+  const a1=[hip[0]+V.over*95,hip[1]+112],k1=[(hip[0]+a1[0])/2+(55-V.rom)*.7+14,hip[1]+58],a2=[hip[0]-52,hip[1]+98],k2=[hip[0]-8,hip[1]+66];
+  s=ln(hip,sh)+`<circle cx="${f(hd[0])}" cy="${f(hd[1])}" r="16" fill="#0e2340"/>`+ln(hip,k1)+ln(k1,a1)+ln(hip,k2,"#4a6079")+ln(k2,a2,"#4a6079")+ln(a1,[a1[0]+22,a1[1]+2],"#0e2340",6)+ln(a2,[a2[0]+22,a2[1]-4],"#4a6079",6);pts=[hip,sh,k1,a1,k2,a2]}
+ else if(vw=="front"){const pt=V.pelvis*R,st=V.shoulder*R,hy=170,hl=[78,hy-22*Math.sin(pt)],hr=[142,hy+22*Math.sin(pt)],sl=[72,82-30*Math.sin(st)],sr=[148,82+30*Math.sin(st)],w=V.wide*24,
+   kl=[hl[0]+V.valgus*260,hl[1]+62],kr=[hr[0]-V.valgus*260,hr[1]+62],al=[110-w-12,hl[1]+120],ar=[110+w+12,hr[1]+120];
+  s=ln(sl,sr)+ln([110,82],[110,170])+`<circle cx="110" cy="52" r="16" fill="#0e2340"/>`+ln(hl,hr)+ln(hl,kl)+ln(kl,al)+ln(hr,kr)+ln(kr,ar);pts=[sl,sr,hl,hr,kl,kr,al,ar]}
+ else{const pr=V.pron*R,hl=[88,170],hr=[132,170],kl=[88,232],kr=[132,232],al=[88,290],ar=[132,290];
+  s=ln([110,170],[110,84])+`<circle cx="110" cy="54" r="16" fill="#0e2340"/>`+ln([60,84],[160,84])+ln(hl,hr)+ln(hl,kl)+ln(kl,al)+ln(hr,kr)+ln(kr,ar)+ln(al,[al[0]-Math.sin(pr)*20,al[1]+Math.cos(pr)*20],"#0fb5a6",7)+ln(ar,[ar[0]+Math.sin(pr)*20,ar[1]+Math.cos(pr)*20],"#0fb5a6",7);pts=[hl,hr,kl,kr,al,ar]}
+ return `<svg viewBox="0 0 220 320"><line x1="10" y1="312" x2="210" y2="312" stroke="#cfd8e0" stroke-width="3"/>${s}${pts.map(dot).join("")}</svg>`}
+
+/* ---------- exemples de la demo ---------- */
+const mk=o=>({narrow:o.wide,bwd:-o.fwd,supin:-o.pron,...o});
+const EX={
+a:mk({valgus:.04,pelvis:2.5,shoulder:3,sway:.15,wide:.7,fwd:6,head:.1,rom:52,over:.38,cad:112,pron:3}),
+b:mk({valgus:.13,pelvis:8.5,shoulder:7,sway:.35,wide:.5,fwd:8,head:.15,rom:50,over:.42,cad:108,pron:9}),
+c:mk({valgus:.05,pelvis:3,shoulder:4,sway:.2,wide:.8,fwd:17,head:.36,rom:33,over:.68,cad:88,pron:-9})};
+const VIEWS={side:["fwd","rom","over","cad","head"],front:["valgus","pelvis","shoulder","sway","wide"],back:["pron"]};
+let dv="side",de="a";
+function renderDemo(){const V=EX[de],r=evalV(V),P0={ai:2,sex:"",h:0,wt:0,prev:0,long:0,mol:[]};
+ $$("#vtabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v==dv));$$("#exs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.e==de));
+ $("#fig").innerHTML=figure(dv,V);$("#fig").setAttribute("aria-label",t("ex_note"));$("#vdesc").textContent=t("vd_"+dv);
+ $("#dg").innerHTML=VIEWS[dv].map(k=>gauge(k,V[k])).join("");
+ $("#dfind").innerHTML=findHTML(r.bad,P0);$("#shoe-demo").innerHTML=shoeHTML(r.bad,P0)}
+$$("#vtabs button").forEach(b=>b.onclick=()=>{dv=b.dataset.v;renderDemo()});
+$$("#exs button").forEach(b=>b.onclick=()=>{de=b.dataset.e;renderDemo()});
+
+/* ---------- historial i comparació ---------- */
+const HK="po_hist",hist=()=>{try{return JSON.parse(localStorage.getItem(HK))||[]}catch(e){return[]}};
+const put=h=>{try{localStorage.setItem(HK,JSON.stringify(h.slice(-20)))}catch(e){}};
+let sel=[];
+function renderHist(){const h=hist(),el=$("#hist");
+ if(!h.length){el.innerHTML=`<p class="sub">${t("pg_empty")}</p>`;return}
+ const n=Math.max(1,h.length-1),pts=h.map((x,i)=>[i*300/n,100-x.sc]);
+ el.innerHTML=`<svg viewBox="-12 -12 324 124" class="chart" role="img"><polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#0fb5a6" stroke-width="3"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#0e2340"/>`).join("")}</svg>
+ <ul class="hl">${h.map((x,i)=>`<li><label><input type="checkbox" data-i="${i}" ${sel.includes(i)?"checked":""}> ${new Date(x.d).toLocaleDateString(["ca","es","en"][LI])} · ${x.sc}/100</label></li>`).join("")}</ul>
+ <p class="src">${t("pg_pick")}</p><div id="cmp"></div><button class="ghost2" id="hdel">${t("pg_del")}</button>`;
+ $$("#hist input").forEach(c=>c.onchange=()=>{const i=+c.dataset.i;sel=c.checked?[...sel,i].slice(-2):sel.filter(x=>x!=i);renderHist()});
+ $("#hdel").onclick=()=>{put([]);sel=[];renderHist()};
+ if(sel.length==2){const [A,B]=sel.map(i=>h[i]).sort((a,b)=>a.d-b.d);
+  const rows=Object.keys(K).filter(k=>k!="narrow"&&k!="bwd"&&Number.isFinite(A.V[k])&&Number.isFinite(B.V[k])).map(k=>{const d=B.V[k]-A.V[k],better=K[k].d==1?d<0:d>0,same=Math.abs(d)<1e-9;
+   return `<tr><td>${K[k].t[LI]}</td><td>${FM[K[k].f](A.V[k])}</td><td>${FM[K[k].f](B.V[k])}</td><td class="${same?"":better?"s0":"s2"}">${same?"=":better?"▲":"▼"}</td></tr>`}).join("");
+  $("#cmp").innerHTML=`<table class="ct"><tr><th>${t("th_m")}</th><th>${new Date(A.d).toLocaleDateString(["ca","es","en"][LI])}</th><th>${new Date(B.d).toLocaleDateString(["ca","es","en"][LI])}</th><th>${t("th_ch")}</th></tr>${rows}</table>`}}
+
+/* ---------- informe ---------- */
+function show({bad,oks,m,V},P){
  const sc=Math.max(0,100-bad.reduce((n,b)=>n+b.sev*7,0)),col=sc>=80?"var(--ok)":sc>=60?"var(--mid)":"var(--bad)";
  $("#ring").style.background=`conic-gradient(${col} ${sc*3.6}deg,var(--line) 0)`;$("#sc").textContent=sc;
  $("#verd").textContent=t(sc>=80?"v_hi":sc>=60?"v_mid":"v_lo");
@@ -356,31 +655,54 @@ function show({bad,oks,m},P){
  const fi=[[t("f_act"),t(["o_walk","o_run","o_both"][P.ai])],[t("f_age"),P.age],[t("f_sex"),P.sex?t("o_"+P.sex):"–"],[t("f_h"),P.h?P.h+" cm":"–"],[t("f_wt"),P.wt?P.wt+" kg":"–"],
   [t("f_pain"),P.mol.length?P.mol.map(z=>t("m_"+z)).join(", "):t("none")],[t("fi_step"),P.h&&isFinite(m.step)?"≈"+Math.round(m.step*P.h)+" cm":"–"],[t("f_cad"),isFinite(m.cad)?m.cad.toFixed(0)+" "+t("spm"):"–"]];
  $("#fich").innerHTML=fi.map(([a,b])=>`<div><small>${a}</small><b>${b}</b></div>`).join("");
- $("#fl").innerHTML=bad.map(({k,e,v,sev})=>{const ex=[...e.ex[LI]];if(P.sex=="f"&&(k=="valgus"||k=="pelvis"))ex.push(t("ex_f"));
-  return `<article class="f s${sev}"><h3>${e.t[LI]}${hit(k).length?`<span class="hit">${t("hit")}: ${hit(k).join(", ")}</span>`:""}</h3><div class="v">${t("sev"+sev)} · ${t("val")}: ${FM[e.f](v)}</div>
-  <div class="cols"><div><h4>${t("col_now")}</h4>${li(e.now[LI])}</div><div><h4>${t("col_fut")}</h4>${li(e.fut[LI])}</div></div>
-  <h4>${t("col_ex")}</h4>${li(ex.map(sf))}</article>`}).join("")||`<p>${t("r_none")}</p>`;
+ $("#gauges").innerHTML=Object.keys(K).filter(k=>k!="narrow"&&k!="bwd"&&isFinite(V[k])).map(k=>gauge(k,V[k])).join("");
+ $("#fl").innerHTML=findHTML(bad,P);
  const refer=bad.some(b=>b.sev==2)||P.mol.length||P.long||sc<60;
  $("#ref").innerHTML=refer?`<div class="note"><b>${t("ref_t")}</b> ${P.mol.length||P.long?t("ref_p1")+(P.long?t("ref_p2"):"")+". ":""}${P.prev?t("ref_p3")+" ":""}${t("ref_p4")}</div>`:`<div class="note">${t("ref_ok")}</div>`;
- const nS=bad.filter(b=>b.e.tag=="S").length,nC=bad.filter(b=>b.e.tag=="C").length,s=nS&&nC?"SC":nS?"S":nC?"C":"N";
- const X=[];if(P.ai>0)X.push(t("sh_run"));if(P.ai==0)X.push(t("sh_walk"));if(P.wt>=85)X.push(t("sh_wt"));
- $("#shoe").innerHTML=`<h3>${t("sh_"+s+"_t")}</h3><p>${t("sh_"+s+"_p")}</p>${li([...X,t("sh_g1"),t("sh_g2"),t("sh_g3"),t(nS>1?"sh_g4a":"sh_g4b")])}`;
+ $("#shoe").innerHTML=shoeHTML(bad,P);
+ $("#save").textContent=t("save");$("#save").disabled=false;
+ $("#save").onclick=()=>{put([...hist(),{d:Date.now(),sc,V:Object.fromEntries(Object.entries(V).map(([k,v])=>[k,isFinite(v)?+v.toFixed(4):null]))}]);$("#save").textContent=t("saved");$("#save").disabled=true;renderHist()};
  $("#res").style.display="block"}
+
+/* ---------- aplicar idioma ---------- */
+function apply(){
+ document.documentElement.lang=["ca","es","en"][LI];document.title=t("title");
+ $$("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));$$("[data-h]").forEach(e=>e.innerHTML=t(e.dataset.h));$$("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
+ $$(".lang button").forEach((b,i)=>b.setAttribute("aria-pressed",i==LI));
+ st(sk);renderDemo();renderHist();if(last)show(last.r,last.P)}
+$$(".lang button").forEach((b,i)=>b.onclick=()=>{LI=i;try{localStorage.setItem("pl",i)}catch(e){}apply()});
+
+/* ---------- navegació i animacions ---------- */
+$("#burger").onclick=()=>{const o=$("#menu").classList.toggle("open");$("#burger").setAttribute("aria-expanded",o)};
+$$("#menu a").forEach(a=>a.onclick=()=>{$("#menu").classList.remove("open");$("#burger").setAttribute("aria-expanded",false)});
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.15});$$(".rv").forEach(e=>io.observe(e))}else $$(".rv").forEach(e=>e.classList.add("in"));
+
+/* ---------- formulari de contacte (cal configurar MAIL) ---------- */
+const MAIL="janalexandre.cantarero@ies.car.edu";
+$("#cf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
+ if(!MAIL){$("#cfm").textContent=t("fm_nomail");return}
+ location.href=`mailto:${MAIL}?subject=${encodeURIComponent("PasÒptim · "+f.get("role"))}&body=${encodeURIComponent(f.get("name")+" ("+f.get("mail")+")\n\n"+f.get("msg"))}`};
+
+/* ---------- formulari i vídeos ---------- */
+const chk=()=>{const a=+$("#age").value;$("#tut").style.display=a>0&&a<18?"flex":"none";$("#go").disabled=!(have.front&&have.side&&$("#ok1").checked&&a>=8&&(a>=18||$("#ok2").checked))};
+for(const k of ["front","side","back"]){$("#f_"+k).onchange=e=>{const f=e.target.files[0];if(!f)return;$("#v_"+k).src=URL.createObjectURL(f);$("#w_"+k).classList.add("on");have[k]=1;chk()}}
+["#age","#ok1","#ok2"].forEach(x=>$(x).oninput=chk);
 
 $("#go").onclick=async()=>{
  const pg=$("#pg"),ks=["front","side"].concat(have.back?["back"]:[]),R={};
  $("#bar").style.display="block";$("#go").disabled=true;
  try{
-  if(!M){st("st_load");await load()}
+  if(!M||!M.lmk){st("st_load");await load()}
   for(let i=0;i<ks.length;i++){st("st_"+ks[i]);R[ks[i]]=await run(ks[i],p=>pg.style.width=(i+p)/ks.length*100+"%")}
   if(R.front.fr.length<20||R.side.fr.length<20){st("st_fail");return}
   const B=R.back&&R.back.fr.length>=20?back(R.back):NaN;
-  const P={ai:+$("#act").value,age:+$("#age").value,sex:$("#sex").value,h:+$("#h").value||0,wt:+$("#wt").value||0,prev:$("#prev").checked,long:$("#long").checked,mol:[...document.querySelectorAll(".mol:checked")].map(c=>c.value)};
+  const P={ai:+$("#act").value,age:+$("#age").value,sex:$("#sex").value,h:+$("#h").value||0,wt:+$("#wt").value||0,prev:$("#prev").checked,long:$("#long").checked,mol:$$(".mol:checked").map(c=>c.value)};
   last={r:analyze(front(R.front),side(R.side),B),P};show(last.r,last.P);$("#res").scrollIntoView({behavior:"smooth"});st("st_done");
  }catch(e){console.error(e);st("st_err")}finally{chk()}};
 
 $("#wipe").onclick=()=>{for(const k of ["front","side","back"]){const v=$("#v_"+k);v.pause();URL.revokeObjectURL(v.src);v.removeAttribute("src");v.load();$("#w_"+k).classList.remove("on");$("#f_"+k).value="";have[k]=0}chk();st("st_wiped")};
 apply();
+
 </script>
 </body>
 </html>
